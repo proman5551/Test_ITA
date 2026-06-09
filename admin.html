@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>INSPIRE — 관리자 대시보드</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/admin.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+</head>
+<body>
+<div id="wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-top">
+      <div class="logo-icon" style="background:#7c3aed;"><i class="ti ti-shield-lock"></i></div>
+      <div class="logo-text-wrap">
+        <div class="logo-name">INSPIRE</div>
+        <div class="logo-sub">관리자 대시보드</div>
+      </div>
+      <button class="collapse-btn" id="collapseBtn" onclick="toggleSidebar()" aria-label="사이드바 접기">
+        <i class="ti ti-layout-sidebar-left-collapse" id="collapseIcon"></i>
+      </button>
+    </div>
+    <div class="sb-ws">
+      <div class="sb-label">워크스페이스</div>
+      <div class="ws-box" style="background:var(--purple-active-bg);">
+        <div class="ws-dot" style="background:#7c3aed;"></div>
+        <div class="ws-name" style="color:#7c3aed;">Security Control Room</div>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">관리자 메뉴</div>
+      <div class="sb-item active"><i class="ti ti-layout-dashboard"></i><span>팀 대시보드</span></div>
+      <div class="sb-item"><i class="ti ti-users"></i><span>사원 관리</span><span class="sb-badge blue" id="sbMemberCount">0</span></div>
+      <div class="sb-item"><i class="ti ti-target"></i><span>KPI 현황</span></div>
+      <div class="sb-item"><i class="ti ti-checkbox"></i><span>Task 현황</span></div>
+      <div class="sb-item"><i class="ti ti-layout-kanban"></i><span>Project 현황</span></div>
+      <div class="sb-item"><i class="ti ti-message-circle"></i><span>피드백 내역</span></div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">사원 페이지</div>
+      <div class="sb-item" onclick="location.href='index.html'"><i class="ti ti-arrow-left"></i><span>사원 홈으로</span></div>
+    </div>
+    <div class="sb-spacer"></div>
+    <div class="sb-foot">
+      <div class="page-switch-row">
+        <button class="page-switch-btn" onclick="location.href='index.html'">
+          <i class="ti ti-user"></i><span>사원 페이지</span>
+        </button>
+        <button class="page-switch-btn active-page">
+          <i class="ti ti-shield-check"></i><span>관리자 페이지</span>
+        </button>
+      </div>
+      <div class="user-row">
+        <div class="avatar" style="background:#7c3aed;">SV</div>
+        <div class="user-info">
+          <div class="user-name">손대훈</div>
+          <div class="user-role" style="color:#7c3aed;">Supervisor</div>
+        </div>
+        <button class="logout-btn" onclick="location.href='login.html'" aria-label="로그아웃"><i class="ti ti-logout"></i></button>
+      </div>
+    </div>
+  </aside>
+ 
+  <!-- MAIN -->
+  <div class="right-main">
+    <div class="topbar">
+      <div class="greeting">
+        <div class="greeting-name">
+          팀 관리 대시보드
+          <span class="admin-badge"><i class="ti ti-shield-check"></i> Supervisor</span>
+        </div>
+        <div class="greeting-date">2025년 6월 · Security Control Room</div>
+      </div>
+      <div class="search-wrap">
+        <i class="ti ti-search"></i>
+        <input type="text" id="adminSearch" placeholder="사원명, KPI, Task 검색..."/>
+      </div>
+      <div class="top-actions">
+        <div class="icon-btn" title="알림"><i class="ti ti-bell"></i></div>
+        <div class="dark-toggle" onclick="toggleDark()" aria-label="다크모드">
+          <div class="knob" id="knob">🌙</div>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="admin-content">
+ 
+      <!-- 팀 전체 요약 -->
+      <div class="team-summary" id="teamSummary"></div>
+ 
+      <!-- KPI 달성률 차트 + 최근 피드백 -->
+      <div class="charts-row">
+        <div class="card chart-card">
+          <div class="card-head">
+            <i class="ti ti-chart-bar"></i>
+            <div class="card-head-title">팀 KPI 달성률</div>
+            <span class="card-head-badge badge-blue">6월</span>
+          </div>
+          <div class="kpi-chart-area" id="kpiChartArea"></div>
+        </div>
+        <div class="card chart-card">
+          <div class="card-head">
+            <i class="ti ti-activity"></i>
+            <div class="card-head-title">Task / Project 상태 분포</div>
+            <span class="card-head-badge badge-gray">전체</span>
+          </div>
+          <div class="status-dist-area" id="statusDistArea"></div>
+        </div>
+        <div class="card chart-card">
+          <div class="card-head">
+            <i class="ti ti-message-circle"></i>
+            <div class="card-head-title">최근 피드백</div>
+            <span class="card-head-badge badge-ok" id="recentFbCount">0</span>
+          </div>
+          <div class="recent-fb-area" id="recentFbArea"></div>
+        </div>
+      </div>
+ 
+      <!-- 사원별 현황 카드 -->
+      <div class="section-header">
+        <div class="section-title"><i class="ti ti-users"></i> 사원별 업무 현황</div>
+        <div class="section-actions">
+          <select class="filter-sel" id="memberFilter" onchange="renderMemberCards()">
+            <option value="all">전체 사원</option>
+          </select>
+          <select class="filter-sel" id="sortFilter" onchange="renderMemberCards()">
+            <option value="name">이름순</option>
+            <option value="kpi">KPI 달성률순</option>
+            <option value="task">Task 수순</option>
+          </select>
+        </div>
+      </div>
+      <div class="member-grid" id="memberGrid"></div>
+ 
+    </div>
+  </div>
+</div>
+ 
+<!-- 사원 드로어 -->
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div class="drawer-member-info" id="drawerMemberInfo"></div>
+    <button class="drawer-close" onclick="closeDrawer()" aria-label="닫기"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="drawer-tabs" id="drawerTabs">
+    <button class="drawer-tab active" data-tab="kpi" onclick="switchDrawerTab('kpi')"><i class="ti ti-target"></i> KPI</button>
+    <button class="drawer-tab" data-tab="task" onclick="switchDrawerTab('task')"><i class="ti ti-checkbox"></i> Task</button>
+    <button class="drawer-tab" data-tab="project" onclick="switchDrawerTab('project')"><i class="ti ti-layout-kanban"></i> Project</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+ 
+<!-- 피드백 작성 모달 -->
+<div class="modal-backdrop" id="fbBackdrop" onclick="closeFbModal(event)">
+  <div class="modal" style="width:460px;">
+    <div class="modal-header">
+      <div class="modal-title" id="fbModalTitle">KPI 피드백 작성</div>
+      <button class="modal-close" onclick="closeFbModal(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="gap:10px;">
+      <div style="padding:10px 12px;background:var(--gray-bg);border-radius:8px;font-size:12px;color:var(--text-primary);" id="fbTargetInfo"></div>
+      <div class="form-group">
+        <label style="font-size:11px;font-weight:500;color:var(--text-sec);">피드백 내용 <span style="color:#dc2626;">*</span></label>
+        <textarea id="fbText" rows="4" style="padding:8px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:13px;font-family:inherit;outline:none;resize:vertical;width:100%;" placeholder="구체적인 피드백을 작성해주세요..."></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group">
+          <label style="font-size:11px;font-weight:500;color:var(--text-sec);">평가</label>
+          <select id="fbRating" style="padding:7px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;">
+            <option value="excellent">우수 ⭐⭐⭐</option>
+            <option value="good" selected>양호 ⭐⭐</option>
+            <option value="needs_improvement">개선 필요 ⭐</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label style="font-size:11px;font-weight:500;color:var(--text-sec);">액션</label>
+          <select id="fbAction" style="padding:7px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;">
+            <option value="comment">코멘트만</option>
+            <option value="approve">승인</option>
+            <option value="request_revision">수정 요청</option>
+            <option value="reject">반려</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px;border-top:.5px solid var(--card-border);display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="closeFbModal(null)" style="padding:7px 16px;border-radius:7px;border:.5px solid var(--card-border);background:transparent;color:var(--text-sec);font-size:12px;cursor:pointer;font-family:inherit;">취소</button>
+      <button onclick="submitFeedback()" style="padding:7px 20px;border-radius:7px;border:.5px solid #7c3aed;background:#7c3aed;color:#fff;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;">피드백 제출</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
