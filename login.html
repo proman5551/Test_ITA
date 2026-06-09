@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>INSPIRE — 로그인</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .page {
+      display: flex;
+      width: 860px;
+      min-height: 560px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 0.5px solid #e2e8f0;
+    }
+
+    .left {
+      width: 46%;
+      background: #0f1729;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 44px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .left-grid {
+      position: absolute;
+      inset: 0;
+      opacity: .06;
+      pointer-events: none;
+    }
+
+    .z1 { position: relative; z-index: 1; }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-ic {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: #1d4ed8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .brand-ic i { color: #fff; font-size: 18px; }
+    .brand-nm  { font-size: 16px; font-weight: 500; color: #fff; }
+    .brand-sub { font-size: 11px; color: #94a3b8; margin-top: 1px; }
+
+    .left-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 32px 0 24px;
+    }
+
+    .left-title {
+      font-size: 22px;
+      font-weight: 500;
+      color: #fff;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .left-desc {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.75;
+      margin-bottom: 32px;
+    }
+
+    .feature-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .feat {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,.05);
+      border: 0.5px solid rgba(255,255,255,.09);
+      border-radius: 8px;
+    }
+
+    .feat-ic {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .feat-ic i { font-size: 15px; }
+    .feat-ic.blue   { background: rgba(29,78,216,.2); color: #60a5fa; }
+    .feat-ic.green  { background: rgba(22,163,74,.2);  color: #4ade80; }
+    .feat-ic.amber  { background: rgba(217,119,6,.2);  color: #fbbf24; }
+    .feat-ic.purple { background: rgba(124,58,237,.2); color: #c084fc; }
+
+    .feat-txt   { flex: 1; }
+    .feat-label { font-size: 11px; font-weight: 500; color: #e2e8f0; }
+    .feat-sub   { font-size: 10px; color: #64748b; margin-top: 1px; }
+
+    .left-foot { font-size: 10px; color: #334155; }
+
+    .right {
+      flex: 1;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 52px;
+    }
+
+    .form-card { width: 100%; max-width: 320px; }
+
+    .form-top { margin-bottom: 28px; }
+    .form-title { font-size: 20px; font-weight: 500; color: #111827; margin-bottom: 5px; }
+    .form-sub   { font-size: 12px; color: #6b7280; line-height: 1.6; }
+
+    .msg-banner {
+      display: none;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 11px;
+      border-radius: 7px;
+      font-size: 11px;
+      margin-bottom: 14px;
+      border: 0.5px solid;
+    }
+
+    .msg-banner i { font-size: 14px; flex-shrink: 0; }
+    .msg-banner.error { background: #fff1f1; border-color: #f09595; color: #a32d2d; }
+    .msg-banner.info  { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
+
+    .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .form-label { font-size: 12px; font-weight: 500; color: #374151; }
+
+    .inp-wrap { position: relative; display: flex; align-items: center; }
+
+    .inp-icon {
+      position: absolute;
+      left: 11px;
+      color: #9ca3af;
+      font-size: 15px;
+      pointer-events: none;
+    }
+
+    .inp-wrap input {
+      width: 100%;
+      padding: 9px 36px 9px 34px;
+      border: 0.5px solid #e5e7eb;
+      border-radius: 8px;
+      background: #f9fafb;
+      color: #111827;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .15s, background .15s;
+    }
+
+    .inp-wrap input:focus { border-color: #2563eb; background: #fff; }
+    .inp-wrap input::placeholder { color: #9ca3af; }
+
+    .input-error {
+      border-color: #d93025 !important;
+      background: #fff1f1 !important;
+    }
+
+    .eye-btn {
+      position: absolute;
+      right: 10px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      padding: 0;
+      font-size: 15px;
+    }
+
+    .eye-btn:hover { color: #6b7280; }
+
+    .row-between {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .check-box {
+      width: 15px;
+      height: 15px;
+      border: 0.5px solid #d1d5db;
+      border-radius: 3px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background .15s, border-color .15s;
+    }
+
+    .check-box.on { background: #2563eb; border-color: #2563eb; }
+    .check-box i  { font-size: 10px; color: #fff; }
+    .check-lbl    { font-size: 12px; color: #6b7280; }
+
+    .forgot {
+      font-size: 12px;
+      color: #2563eb;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+    }
+
+    .forgot:hover { text-decoration: underline; }
+
+    .btn-login {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: #1d4ed8;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: opacity .15s;
+      margin-bottom: 16px;
+    }
+
+    .btn-login:hover { opacity: .9; }
+    .btn-login:active { opacity: .8; }
+    .btn-login i { font-size: 15px; }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .divider-line { flex: 1; height: 0.5px; background: #e5e7eb; }
+    .divider-txt  { font-size: 11px; color: #9ca3af; white-space: nowrap; }
+
+    .btn-sso {
+      width: 100%;
+      padding: 9px;
+      border-radius: 8px;
+      border: 0.5px solid #e5e7eb;
+      background: #f9fafb;
+      color: #374151;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: background .15s;
+    }
+
+    .btn-sso:hover { background: #f3f4f6; }
+    .btn-sso i { font-size: 15px; color: #6b7280; }
+
+    .form-foot {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 0.5px solid #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .foot-ic {
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+      background: #eff6ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .foot-ic i { font-size: 13px; color: #2563eb; }
+    .foot-txt  { font-size: 11px; color: #9ca3af; }
+
+    .success-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 0;
+      text-align: center;
+    }
+
+    .success-ic {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #f0fdf4;
+      border: 0.5px solid #a7f3d0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success-ic i  { font-size: 26px; color: #16a34a; }
+    .success-title { font-size: 16px; font-weight: 500; color: #111827; }
+    .success-sub   { font-size: 12px; color: #6b7280; line-height: 1.65; }
+
+    .btn-goto {
+      margin-top: 4px;
+      padding: 9px 22px;
+      border-radius: 8px;
+      border: none;
+      background: #1d4ed8;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: opacity .15s;
+    }
+
+    .btn-goto:hover { opacity: .9; }
+    .btn-goto i { font-size: 15px; }
+
+    .btn-login.loading {
+      opacity: .7;
+      pointer-events: none;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { display: inline-block; animation: spin .7s linear infinite; }
+
+    @media (max-width: 800px) {
+      .page {
+        width: 100%;
+        flex-direction: column;
+      }
+
+      .left {
+        width: 100%;
+        padding: 30px;
+      }
+
+      .right {
+        padding: 36px 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <div class="left">
+    <svg class="left-grid" viewBox="0 0 400 560" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <line x1="40" y1="0" x2="0" y2="0" stroke="#fff" stroke-width=".5"/>
+          <line x1="0" y1="0" x2="0" y2="40" stroke="#fff" stroke-width=".5"/>
+        </pattern>
+      </defs>
+      <rect width="400" height="560" fill="url(#grid)"/>
+    </svg>
+
+    <div class="brand z1">
+      <div class="brand-ic"><i class="ti ti-shield-lock" aria-hidden="true"></i></div>
+      <div>
+        <div class="brand-nm">INSPIRE</div>
+        <div class="brand-sub">Security Team</div>
+      </div>
+    </div>
+
+    <div class="left-body z1">
+      <div class="left-title">보안팀 업무를<br>한 곳에서</div>
+      <div class="left-desc">
+        사건보고서·인수인계·CCTV 리뷰·KPI까지<br>
+        Security Control Room의 모든 업무를<br>
+        통합 관리합니다.
+      </div>
+
+      <div class="feature-list">
+        <div class="feat">
+          <div class="feat-ic blue"><i class="ti ti-file-report" aria-hidden="true"></i></div>
+          <div class="feat-txt">
+            <div class="feat-label">사건보고서 · 인수인계</div>
+            <div class="feat-sub">접수부터 처리까지 한 번에</div>
+          </div>
+        </div>
+
+        <div class="feat">
+          <div class="feat-ic green"><i class="ti ti-target" aria-hidden="true"></i></div>
+          <div class="feat-txt">
+            <div class="feat-label">KPI 관리 · 목표 추적</div>
+            <div class="feat-sub">월별 달성률 및 피드백 관리</div>
+          </div>
+        </div>
+
+        <div class="feat">
+          <div class="feat-ic amber"><i class="ti ti-camera" aria-hidden="true"></i></div>
+          <div class="feat-txt">
+            <div class="feat-label">CCTV Review · 데일리 로그</div>
+            <div class="feat-sub">정기 점검 및 일일 기록 관리</div>
+          </div>
+        </div>
+
+        <div class="feat">
+          <div class="feat-ic purple"><i class="ti ti-gavel" aria-hidden="true"></i></div>
+          <div class="feat-txt">
+            <div class="feat-label">경찰영장공문 처리</div>
+            <div class="feat-sub">공문 작성 및 이력 관리</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="left-foot z1">© 2025 INSPIRE Security Operations</div>
+  </div>
+
+  <div class="right">
+    <div class="form-card" id="formCard">
+
+      <div class="form-top">
+        <div class="form-title">로그인</div>
+        <div class="form-sub">Security Control Room에 오신 것을 환영합니다</div>
+      </div>
+
+      <div class="msg-banner error" id="msgBanner">
+        <i class="ti ti-alert-circle" id="msgIcon" aria-hidden="true"></i>
+        <span id="msgText"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="userId">사번 / 아이디</label>
+        <div class="inp-wrap">
+          <i class="ti ti-user inp-icon" aria-hidden="true"></i>
+          <input type="text" id="userId" placeholder="사번 또는 아이디 입력" autocomplete="username" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="userPw">비밀번호</label>
+        <div class="inp-wrap">
+          <i class="ti ti-lock inp-icon" aria-hidden="true"></i>
+          <input type="password" id="userPw" placeholder="비밀번호 입력" autocomplete="current-password" />
+          <button class="eye-btn" id="eyeBtn" type="button" aria-label="비밀번호 표시/숨기기">
+            <i class="ti ti-eye" id="eyeIcon"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="row-between">
+        <div class="check-row" id="checkRow" role="checkbox" aria-checked="false" tabindex="0">
+          <div class="check-box" id="checkBox"></div>
+          <span class="check-lbl">로그인 상태 유지</span>
+        </div>
+        <button class="forgot" id="forgotBtn" type="button">비밀번호 찾기</button>
+      </div>
+
+      <button class="btn-login" id="loginBtn" type="button">
+        <i class="ti ti-login" aria-hidden="true"></i>
+        로그인
+      </button>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-txt">또는</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <button class="btn-sso" id="ssoBtn" type="button">
+        <i class="ti ti-building" aria-hidden="true"></i>
+        사내 SSO로 로그인
+      </button>
+
+      <div class="form-foot">
+        <div class="foot-ic"><i class="ti ti-shield-check" aria-hidden="true"></i></div>
+        <span class="foot-txt">256-bit SSL 암호화 · 보안 접속</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  var pwVisible = false;
+  var remembered = false;
+
+  function toggleCheck() {
+    remembered = !remembered;
+
+    var box = document.getElementById('checkBox');
+    var row = document.getElementById('checkRow');
+
+    if (remembered) {
+      box.classList.add('on');
+      box.innerHTML = '<i class="ti ti-check"></i>';
+      row.setAttribute('aria-checked', 'true');
+    } else {
+      box.classList.remove('on');
+      box.innerHTML = '';
+      row.setAttribute('aria-checked', 'false');
+    }
+  }
+
+  document.getElementById('checkRow').addEventListener('click', toggleCheck);
+
+  document.getElementById('checkRow').addEventListener('keydown', function(e) {
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      toggleCheck();
+    }
+  });
+
+  document.getElementById('eyeBtn').addEventListener('click', function() {
+    pwVisible = !pwVisible;
+
+    var inp = document.getElementById('userPw');
+    var ic  = document.getElementById('eyeIcon');
+
+    inp.type = pwVisible ? 'text' : 'password';
+    ic.className = pwVisible ? 'ti ti-eye-off' : 'ti ti-eye';
+  });
+
+  function showMsg(type, text) {
+    var banner = document.getElementById('msgBanner');
+    var icon   = document.getElementById('msgIcon');
+    var msg    = document.getElementById('msgText');
+
+    banner.className = 'msg-banner ' + type;
+    icon.className = type === 'error' ? 'ti ti-alert-circle' : 'ti ti-info-circle';
+    msg.textContent = text;
+    banner.style.display = 'flex';
+  }
+
+  function hideMsg() {
+    document.getElementById('msgBanner').style.display = 'none';
+  }
+
+  function clearInputError() {
+    document.getElementById('userId').classList.remove('input-error');
+    document.getElementById('userPw').classList.remove('input-error');
+  }
+
+  function showSuccess(name) {
+    var card = document.getElementById('formCard');
+
+    card.innerHTML =
+      '<div class="success-wrap">' +
+        '<div class="success-ic"><i class="ti ti-shield-check" aria-hidden="true"></i></div>' +
+        '<div class="success-title">로그인 성공</div>' +
+        '<div class="success-sub">' + name + '님, 환영합니다.<br>Security Control Room으로 이동합니다.</div>' +
+        '<button class="btn-goto" onclick="location.href=\'index.html\'">' +
+          '<i class="ti ti-arrow-right" aria-hidden="true"></i> 대시보드로 이동' +
+        '</button>' +
+      '</div>';
+  }
+
+  function tryLogin() {
+    var idInput = document.getElementById('userId');
+    var pwInput = document.getElementById('userPw');
+    var btn = document.getElementById('loginBtn');
+
+    var id = idInput.value.trim();
+    var pw = pwInput.value.trim();
+
+    clearInputError();
+    hideMsg();
+
+    if (!id || !pw) {
+      if (!id) idInput.classList.add('input-error');
+      if (!pw) pwInput.classList.add('input-error');
+
+      showMsg('error', '사번 또는 비밀번호를 입력해주세요.');
+      return;
+    }
+
+    var flowUrl = "https://default1a5b94899f074537bb3d0aefeae2e8.39.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d9e34779c0c64c1ebacc41d93c0b79d8/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=gt8pvDqlad51bYUsRZjfPflx_5EDPrYtQysdXHp-D9U";
+
+    btn.classList.add('loading');
+    btn.innerHTML = '<i class="ti ti-loader spin" aria-hidden="true"></i> 확인 중...';
+
+    fetch(flowUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        EmployeeID: id,
+        UserPIN: pw
+      })
+    })
+    .then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Login Failed");
+      }
+    })
+    .then(function(data) {
+      btn.classList.remove('loading');
+      btn.innerHTML = '<i class="ti ti-login" aria-hidden="true"></i> 로그인';
+
+      if (data.success === true) {
+        localStorage.setItem('employeeId', data.employeeId || id);
+        localStorage.setItem('employeeName', data.employeeName || data.employName || data.name || id);
+        localStorage.setItem('department', data.department || '');
+        localStorage.setItem('position', data.position || data.role || '');
+
+        if (remembered) {
+          localStorage.setItem('inspire_saved_id', id);
+        } else {
+          localStorage.removeItem('inspire_saved_id');
+        }
+
+        showSuccess(data.employeeName || data.employName || data.name || id);
+
+        setTimeout(function() {
+          window.location.href = "index.html";
+        }, 800);
+
+      } else {
+        idInput.classList.add('input-error');
+        pwInput.classList.add('input-error');
+        showMsg('error', data.message || '아이디 또는 PIN이 올바르지 않습니다.');
+      }
+    })
+    .catch(function(error) {
+      btn.classList.remove('loading');
+      btn.innerHTML = '<i class="ti ti-login" aria-hidden="true"></i> 로그인';
+
+      idInput.classList.add('input-error');
+      pwInput.classList.add('input-error');
+
+      showMsg('error', '로그인 실패: 아이디 또는 비밀번호를 확인해주세요.');
+      console.error(error);
+    });
+  }
+
+  document.getElementById('forgotBtn').addEventListener('click', function() {
+    showMsg('info', '관리자에게 비밀번호 초기화를 요청해주세요.');
+  });
+
+  document.getElementById('ssoBtn').addEventListener('click', function() {
+    showMsg('info', '사내 SSO 인증 페이지로 연결 중입니다.');
+  });
+
+  document.getElementById('userId').addEventListener('input', function() {
+    clearInputError();
+    hideMsg();
+  });
+
+  document.getElementById('userPw').addEventListener('input', function() {
+    clearInputError();
+    hideMsg();
+  });
+
+  document.getElementById('userId').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      document.getElementById('userPw').focus();
+    }
+  });
+
+  document.getElementById('userPw').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      tryLogin();
+    }
+  });
+
+  document.getElementById('loginBtn').addEventListener('click', tryLogin);
+
+  (function() {
+    var saved = localStorage.getItem('inspire_saved_id');
+
+    if (saved) {
+      document.getElementById('userId').value = saved;
+      toggleCheck();
+    }
+  })();
+</script>
+
+</body>
+</html>
