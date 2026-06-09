@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>INSPIRE — Security Team Dashboard</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+</head>
+<body>
+
+<div id="wrap">
+
+  <!-- ── SIDEBAR ─────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sb-top">
+      <div class="logo-icon" onclick="toggleSidebar()">
+        <i class="ti ti-shield-lock" aria-hidden="true"></i>
+      </div>
+      <div class="logo-text-wrap">
+        <div class="logo-name">INSPIRE</div>
+        <div class="logo-sub">Security Team</div>
+      </div>
+      <button class="collapse-btn" id="collapseBtn" onclick="toggleSidebar()" aria-label="사이드바 접기/펼치기">
+        <i class="ti ti-layout-sidebar-left-collapse" id="collapseIcon"></i>
+      </button>
+    </div>
+
+    <div class="sb-ws">
+      <div class="sb-label">워크스페이스</div>
+      <div class="ws-box">
+        <div class="ws-dot"></div>
+        <div class="ws-name">Control Room</div>
+      </div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-label">개인 업무</div>
+
+      <a href="index.html" class="sb-item active">
+        <i class="ti ti-home" aria-hidden="true"></i>
+        <span>홈</span>
+      </a>
+
+      <a href="kpi.html" class="sb-item">
+        <i class="ti ti-target" aria-hidden="true"></i>
+        <span>KPI 관리</span>
+        <span class="sb-badge blue">3</span>
+      </a>
+
+    <a href="task.html" class="sb-item">
+      <i class="ti ti-checkbox" aria-hidden="true"></i>
+      <span>Task</span>
+      <span class="sb-badge ok">5</span>
+    </a>
+
+    <a href="project.html" class="sb-item">
+      <i class="ti ti-layout-kanban" aria-hidden="true"></i>
+      <span>Project</span>
+    </a>
+
+    <a href="memo.html" class="sb-item">
+      <i class="ti ti-notes" aria-hidden="true"></i>
+      <span>메모</span>
+    </a>
+</div>
+
+    <div class="sb-section">
+      <div class="sb-label">업무</div>
+      <div class="sb-item">
+        <i class="ti ti-file-report" aria-hidden="true"></i>
+        <span>사건보고서</span>
+        <span class="sb-badge blue">5</span>
+      </div>
+      <div class="sb-item">
+        <i class="ti ti-transfer" aria-hidden="true"></i>
+        <span>인수인계</span>
+        <span class="sb-badge ok">2</span>
+      </div>
+      <div class="sb-item">
+        <i class="ti ti-clipboard-list" aria-hidden="true"></i>
+        <span>데일리 로그</span>
+      </div>
+      <div class="sb-item">
+        <i class="ti ti-camera" aria-hidden="true"></i>
+        <span>CCTV Review</span>
+      </div>
+      <div class="sb-item">
+        <i class="ti ti-gavel" aria-hidden="true"></i>
+        <span>경찰영장공문</span>
+      </div>
+    </div>
+
+    <div class="sb-spacer"></div>
+
+    <div class="sb-foot">
+
+      <div class="page-switch-row">
+        <button class="page-switch-btn active-page">
+          <i class="ti ti-user"></i>
+          <span>사원 페이지</span>
+        </button>
+        
+        <button class="page-switch-btn" onclick="location.href='admin.html'">
+          <i class="ti ti-shield-check"></i>
+          <span>관리자 페이지</span>
+        </button>
+      </div>
+
+      <div class="user-row">
+        <div class="avatar">DH</div>
+        <div class="user-info">
+          <div class="user-name">손대훈</div>
+          <div class="user-role">Control Supervisor</div>
+        </div>
+        <button class="logout-btn" onclick="logout()" aria-label="로그아웃">
+          <i class="ti ti-logout" aria-hidden="true"></i>
+        </button>
+      </div>
+       
+
+
+    </div>
+
+  </aside>
+  <!-- ── /SIDEBAR ─────────────────────────────── -->
+
+
+  <!-- ── MAIN RIGHT ─────────────────────────── -->
+  <div class="right-main">
+
+    <!-- Top Bar -->
+    <div class="topbar">
+      <div class="greeting">
+        <div class="greeting-name">
+          안녕하세요, 손대훈 님
+          <i class="ti ti-shield-check" aria-hidden="true"></i>
+        </div>
+        <div class="greeting-date">2025년 6월 6일 금요일 · Security Control Room</div>
+      </div>
+      <div class="search-wrap">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input type="text" placeholder="사건번호, 문서, 업무 검색..." />
+      </div>
+      <div class="top-actions">
+        <div class="icon-btn">
+          <i class="ti ti-bell" aria-hidden="true"></i>
+        </div>
+        <div class="dark-toggle" id="darkToggle" onclick="toggleDark()" role="button" aria-label="다크모드 전환">
+          <div class="knob" id="knob">🌙</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="content-row">
+
+      <!-- Center -->
+      <div class="center">
+
+        <!-- ── 지표 카드 8개 (4+4) ───────────────── -->
+        <div class="stat-grid">
+
+          <!-- Row 1: 최근 3일 업무 현황 -->
+          <div class="stat-card blue">
+            <div class="stat-card-inner">
+              <div class="stat-icon-wrap blue"><i class="ti ti-file-report" aria-hidden="true"></i></div>
+              <div class="stat-body">
+                <div class="stat-label">최근 3일 보고서</div>
+                <div class="stat-val">3</div>
+              </div>
+            </div>
+            <div class="stat-footer">
+              <span class="stat-dot new"></span>오늘 2건 · 어제 1건
+            </div>
+          </div>
+
+          <div class="stat-card teal">
+            <div class="stat-card-inner">
+              <div class="stat-icon-wrap teal"><i class="ti ti-camera" aria-hidden="true"></i></div>
+              <div class="stat-body">
+                <div class="stat-label">최근 3일 CCTV Review</div>
+                <div class="stat-val">6</div>
+              </div>
+            </div>
+            <div class="stat-footer">
+              <span class="stat-dot ok"></span>전 구역 정상
+            </div>
+          </div>
+
+          <div class="stat-card purple">
+            <div class="stat-card-inner">
+              <div class="stat-icon-wrap purple"><i class="ti ti-clipboard-list" aria-hidden="true"></i></div>
+              <div class="stat-body">
+                <div class="stat-label">최근 3일 데일리 로그</div>
+                <div class="stat-val">3</div>
+              </div>
+            </div>
+            <div class="stat-footer">
+              <span class="stat-dot ok"></span>3일 연속 작성 완료
+            </div>
+          </div>
+
+          <div class="stat-card amber">
+            <div class="stat-card-inner">
+              <div class="stat-icon-wrap amber"><i class="ti ti-gavel" aria-hidden="true"></i></div>
+              <div class="stat-body">
+                <div class="stat-label">최근 3일 경찰공문</div>
+                <div class="stat-val">1</div>
+              </div>
+            </div>
+            <div class="stat-footer">
+              <span class="stat-dot warn"></span>처리 대기 1건
+            </div>
+          </div>
+
+          <!-- Row 2: 종합 현황 -->
+          <div class="stat-card green">
+            <div class="stat-card-inner">
+              <div class="stat-icon-wrap green"><i class="ti ti-target" aria-hidden="true"></i></div>
+              <div class="stat-body">
+                <div class="stat-label">이번 달 KPI 달성률</div>
+                <div class="stat-val">72%</div>
+              </div>
+            </div>
+            <div class="stat-footer">
+              <div class="stat-mini-bar-wrap">
+                <div class="stat-mini-bar" style="width:72%;background:#16a34a"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card indigo">
+            <div class="stat-card-inner">
+              <div class="stat-icon-wrap indigo"><i class="ti ti-checkbox" aria-hidden="true"></i></div>
+              <div class="stat-body">
+                <div class="stat-label">Task 접수 / 완료</div>
+                <div class="stat-val">5 <span class="stat-val-small">/ 2</span></div>
+              </div>
+            </div>
+            <div class="stat-footer">
+              <div class="stat-mini-bar-wrap">
+                <div class="stat-mini-bar" style="width:40%;background:#4f46e5"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card blue">
+            <div class="stat-card-inner">
+              <div class="stat-icon-wrap blue"><i class="ti ti-file-report" aria-hidden="true"></i></div>
+              <div class="stat-body">
+                <div class="stat-label">최근 7일 사건보고서</div>
+                <div class="stat-val">5</div>
+              </div>
+            </div>
+            <div class="stat-footer">
+              <span class="stat-dot new"></span>이번 주 접수건
+            </div>
+          </div>
+
+          <div class="stat-card green">
+            <div class="stat-card-inner">
+              <div class="stat-icon-wrap green"><i class="ti ti-transfer" aria-hidden="true"></i></div>
+              <div class="stat-body">
+                <div class="stat-label">최근 2일 인수인계</div>
+                <div class="stat-val">2</div>
+              </div>
+            </div>
+            <div class="stat-footer">
+              <span class="stat-dot ok"></span>어제 · 오늘
+            </div>
+          </div>
+
+        </div>
+        <!-- ── /지표 카드 ──────────────────────────── -->
+
+
+        <!-- 사건보고서 + 인수인계 -->
+        <div class="two-col">
+
+          <!-- 최근 7일 사건보고서 -->
+          <div class="card">
+            <div class="card-head">
+              <i class="ti ti-file-report" aria-hidden="true"></i>
+              <div class="card-head-title">최근 7일 사건보고서</div>
+              <span class="card-head-badge badge-blue">5건</span>
+            </div>
+            <div class="day-divider">오늘 · 6월 6일</div>
+            <div class="list-row">
+              <div class="row-dot" style="background:#2563eb"></div>
+              <div class="row-main">
+                <div class="row-title">B동 무단침입 신고</div>
+                <div class="row-sub">#2025-0606-01 · 14:30 접수</div>
+              </div>
+              <span class="row-tag badge-blue">신규</span>
+            </div>
+            <div class="list-row">
+              <div class="row-dot" style="background:#2563eb"></div>
+              <div class="row-main">
+                <div class="row-title">주차장 접촉사고</div>
+                <div class="row-sub">#2025-0606-02 · 09:15 접수</div>
+              </div>
+              <span class="row-tag badge-blue">신규</span>
+            </div>
+            <div class="day-divider">어제 · 6월 5일</div>
+            <div class="list-row">
+              <div class="row-dot" style="background:#16a34a"></div>
+              <div class="row-main">
+                <div class="row-title">로비 분실물 신고</div>
+                <div class="row-sub">#2025-0605-01 · 16:00 접수</div>
+              </div>
+              <span class="row-tag badge-ok">완료</span>
+            </div>
+            <div class="day-divider">6월 4일</div>
+            <div class="list-row">
+              <div class="row-dot" style="background:#16a34a"></div>
+              <div class="row-main">
+                <div class="row-title">외부인 무단 출입 시도</div>
+                <div class="row-sub">#2025-0604-01 · 11:45 접수</div>
+              </div>
+              <span class="row-tag badge-ok">완료</span>
+            </div>
+            <div class="day-divider">6월 2일</div>
+            <div class="list-row">
+              <div class="row-dot" style="background:#16a34a"></div>
+              <div class="row-main">
+                <div class="row-title">야간 순찰 중 이상 발견</div>
+                <div class="row-sub">#2025-0602-01 · 02:10 접수</div>
+              </div>
+              <span class="row-tag badge-ok">완료</span>
+            </div>
+          </div>
+
+          <!-- 최근 2일 인수인계 -->
+          <div class="card">
+            <div class="card-head">
+              <i class="ti ti-transfer" aria-hidden="true"></i>
+              <div class="card-head-title">최근 2일 인수인계</div>
+              <span class="card-head-badge badge-ok">2건</span>
+            </div>
+            <div class="day-divider">오늘 · 6월 6일</div>
+            <div class="list-row">
+              <div class="row-dot" style="background:#2563eb"></div>
+              <div class="row-main">
+                <div class="row-title">주간 → 야간 인수인계</div>
+                <div class="row-sub">김아무개 → 이담당 · 오후 6:00 예정</div>
+              </div>
+              <span class="row-tag badge-blue">예정</span>
+            </div>
+            <div class="list-row handover-note">
+              <div class="note-content">
+                <div class="note-label">특이사항</div>
+                <div class="note-text">B동 무단침입 건 추가 모니터링 필요. 주차장 A구역 CCTV 화질 저하 확인 요망.</div>
+              </div>
+            </div>
+            <div class="day-divider">어제 · 6월 5일</div>
+            <div class="list-row">
+              <div class="row-dot" style="background:#16a34a"></div>
+              <div class="row-main">
+                <div class="row-title">야간 → 주간 인수인계</div>
+                <div class="row-sub">박야간 → 김아무개 · 오전 9:00 완료</div>
+              </div>
+              <span class="row-tag badge-ok">완료</span>
+            </div>
+            <div class="list-row handover-note">
+              <div class="note-content">
+                <div class="note-label">특이사항</div>
+                <div class="note-text">로비 분실물 보관함 이관 완료. 야간 외부 순찰 2회 정상 완료.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- KPI + Task -->
+        <div class="two-col">
+
+          <!-- KPI -->
+          <div class="card">
+            <div class="card-head">
+              <i class="ti ti-target" aria-hidden="true"></i>
+              <div class="card-head-title">이번 달 KPI</div>
+              <span class="card-head-badge badge-blue">6월</span>
+            </div>
+            <div class="kpi-item">
+              <div class="kpi-name">사건처리 완료율</div>
+              <div class="kpi-bar-wrap"><div class="kpi-bar" style="width:85%;background:#16a34a"></div></div>
+              <div class="kpi-pct" style="color:#16a34a">85%</div>
+            </div>
+            <div class="kpi-item">
+              <div class="kpi-name">데일리 로그 작성률</div>
+              <div class="kpi-bar-wrap"><div class="kpi-bar" style="width:100%;background:#2563eb"></div></div>
+              <div class="kpi-pct" style="color:#2563eb">100%</div>
+            </div>
+            <div class="kpi-item">
+              <div class="kpi-name">CCTV 리뷰 완료</div>
+              <div class="kpi-bar-wrap"><div class="kpi-bar" style="width:60%;background:#d97706"></div></div>
+              <div class="kpi-pct" style="color:#d97706">60%</div>
+            </div>
+            <div class="kpi-item">
+              <div class="kpi-name">인수인계 적시 완료</div>
+              <div class="kpi-bar-wrap"><div class="kpi-bar" style="width:40%;background:#dc2626"></div></div>
+              <div class="kpi-pct" style="color:#dc2626">40%</div>
+            </div>
+          </div>
+
+          <!-- Task -->
+          <div class="card">
+            <div class="card-head">
+              <i class="ti ti-checkbox" aria-hidden="true"></i>
+              <div class="card-head-title">오늘 Task</div>
+              <span class="card-head-badge badge-blue">5건</span>
+            </div>
+            <div class="list-row">
+              <div class="row-dot" style="background:#16a34a"></div>
+              <div class="row-main">
+                <div class="row-title">오전 순찰 일지 작성</div>
+                <div class="row-sub">오전 10:00 완료</div>
+              </div>
+              <span class="row-tag badge-ok">완료</span>
+            </div>
+            <div class="list-row">
+              <div class="row-dot" style="background:#16a34a"></div>
+              <div class="row-main">
+                <div class="row-title">CCTV 정기 점검 (A구역)</div>
+                <div class="row-sub">오전 11:30 완료</div>
+              </div>
+              <span class="row-tag badge-ok">완료</span>
+            </div>
+            <div class="list-row">
+              <div class="row-dot" style="background:#2563eb"></div>
+              <div class="row-main">
+                <div class="row-title">B동 사건보고서 작성</div>
+                <div class="row-sub">오후 3:00</div>
+              </div>
+              <span class="row-tag badge-blue">진행중</span>
+            </div>
+            <div class="list-row">
+              <div class="row-dot" style="background:#d97706"></div>
+              <div class="row-main">
+                <div class="row-title">야간 인수인계 문서 작성</div>
+                <div class="row-sub">오후 6:00</div>
+              </div>
+              <span class="row-tag badge-warn">예정</span>
+            </div>
+            <div class="list-row">
+              <div class="row-dot" style="background:#d97706"></div>
+              <div class="row-main">
+                <div class="row-title">데일리 로그 마감 입력</div>
+                <div class="row-sub">오후 8:00</div>
+              </div>
+              <span class="row-tag badge-warn">예정</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      <!-- /Center -->
+
+
+      <!-- Right Panel -->
+      <aside class="right-panel">
+
+        <!-- 달력 -->
+        <div class="rp-block">
+          <div class="rp-title">6월 달력</div>
+          <div class="cal-header">
+            <div class="cal-month">2025년 6월</div>
+            <div class="cal-nav-row">
+              <i class="ti ti-chevron-left" aria-hidden="true"></i>
+              <i class="ti ti-chevron-right" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="cal-grid">
+            <div class="cal-dl">일</div><div class="cal-dl">월</div><div class="cal-dl">화</div>
+            <div class="cal-dl">수</div><div class="cal-dl">목</div><div class="cal-dl">금</div><div class="cal-dl">토</div>
+            <div class="cal-d"></div><div class="cal-d"></div><div class="cal-d"></div>
+            <div class="cal-d"></div><div class="cal-d"></div><div class="cal-d">1</div><div class="cal-d">2</div>
+            <div class="cal-d">3</div>
+            <div class="cal-d has-dot">4</div>
+            <div class="cal-d has-dot">5</div>
+            <div class="cal-d today">6</div>
+            <div class="cal-d">7</div>
+            <div class="cal-d has-dot">8</div>
+            <div class="cal-d">9</div>
+            <div class="cal-d">10</div><div class="cal-d">11</div>
+            <div class="cal-d has-dot">12</div>
+            <div class="cal-d">13</div><div class="cal-d">14</div><div class="cal-d">15</div><div class="cal-d">16</div>
+            <div class="cal-d">17</div><div class="cal-d">18</div><div class="cal-d">19</div>
+            <div class="cal-d">20</div><div class="cal-d">21</div><div class="cal-d">22</div><div class="cal-d">23</div>
+            <div class="cal-d">24</div><div class="cal-d">25</div><div class="cal-d">26</div>
+            <div class="cal-d">27</div><div class="cal-d">28</div><div class="cal-d">29</div><div class="cal-d">30</div>
+          </div>
+        </div>
+
+        <!-- 오늘 일정 -->
+        <div class="rp-block">
+          <div class="rp-title">오늘 일정</div>
+          <div class="rp-item urgent">
+            <div class="rp-item-t">B동 사건보고서 작성</div>
+            <div class="rp-item-m">오후 3:00 · 진행중</div>
+          </div>
+          <div class="rp-item">
+            <div class="rp-item-t">야간 인수인계 작성</div>
+            <div class="rp-item-m">오후 6:00</div>
+          </div>
+          <div class="rp-item">
+            <div class="rp-item-t">데일리 로그 마감</div>
+            <div class="rp-item-m">오후 8:00</div>
+          </div>
+        </div>
+
+        <!-- 빠른 작성 -->
+        <div class="rp-block">
+          <div class="rp-title">빠른 작성</div>
+          <div class="quick-row">
+            <button class="quick-btn">
+              <i class="ti ti-clipboard-list" aria-hidden="true"></i>
+              <span>데일리 로그</span>
+            </button>
+            <button class="quick-btn">
+              <i class="ti ti-file-plus" aria-hidden="true"></i>
+              <span>사건보고서</span>
+            </button>
+            <button class="quick-btn">
+              <i class="ti ti-transfer" aria-hidden="true"></i>
+              <span>인수인계</span>
+            </button>
+            <button class="quick-btn">
+              <i class="ti ti-camera" aria-hidden="true"></i>
+              <span>CCTV 리뷰</span>
+            </button>
+          </div>
+        </div>
+
+      </aside>
+      <!-- /Right Panel -->
+
+    </div>
+    <!-- /Content Row -->
+
+  </div>
+  <!-- ── /MAIN RIGHT ─────────────────────────── -->
+
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
