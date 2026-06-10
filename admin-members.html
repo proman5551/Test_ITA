@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>INSPIRE — 사원 관리 (관리자)</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/admin.css"/>
+  <link rel="stylesheet" href="css/admin-members.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+</head>
+<body>
+<div id="wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-top">
+      <div class="logo-icon" style="background:#7c3aed;"><i class="ti ti-shield-lock"></i></div>
+      <div class="logo-text-wrap">
+        <div class="logo-name">INSPIRE</div>
+        <div class="logo-sub">관리자 대시보드</div>
+      </div>
+      <button class="collapse-btn" id="collapseBtn" onclick="toggleSidebar()" aria-label="사이드바 접기">
+        <i class="ti ti-layout-sidebar-left-collapse" id="collapseIcon"></i>
+      </button>
+    </div>
+    <div class="sb-ws">
+      <div class="sb-label">워크스페이스</div>
+      <div class="ws-box" style="background:var(--purple-active-bg);">
+        <div class="ws-dot" style="background:#7c3aed;"></div>
+        <div class="ws-name" style="color:#7c3aed;">Security Control Room</div>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">관리자 메뉴</div>
+      <div class="sb-item" onclick="location.href='admin.html'"><i class="ti ti-layout-dashboard"></i><span>팀 대시보드</span></div>
+      <div class="sb-item active"><i class="ti ti-users"></i><span>사원 관리</span></div>
+      <div class="sb-item" onclick="location.href='admin-kpi.html'"><i class="ti ti-target"></i><span>KPI 현황</span></div>
+      <div class="sb-item"><i class="ti ti-checkbox"></i><span>Task 현황</span></div>
+      <div class="sb-item"><i class="ti ti-layout-kanban"></i><span>Project 현황</span></div>
+      <div class="sb-item"><i class="ti ti-message-circle"></i><span>피드백 내역</span></div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">사원 페이지</div>
+      <div class="sb-item" onclick="location.href='index.html'"><i class="ti ti-arrow-left"></i><span>사원 홈으로</span></div>
+    </div>
+    <div class="sb-spacer"></div>
+    <div class="sb-foot">
+      <div class="page-switch-row">
+        <button class="page-switch-btn" onclick="location.href='index.html'">
+          <i class="ti ti-user"></i><span>사원 페이지</span>
+        </button>
+        <button class="page-switch-btn active-page">
+          <i class="ti ti-shield-check"></i><span>관리자 페이지</span>
+        </button>
+      </div>
+      <div class="user-row">
+        <div class="avatar" style="background:#7c3aed;">SV</div>
+        <div class="user-info">
+          <div class="user-name">손대훈</div>
+          <div class="user-role" style="color:#7c3aed;">Supervisor</div>
+        </div>
+        <button class="logout-btn" onclick="location.href='login.html'" aria-label="로그아웃"><i class="ti ti-logout"></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="right-main">
+    <div class="topbar">
+      <div class="greeting">
+        <div class="greeting-name">
+          사원 관리
+          <span class="admin-badge"><i class="ti ti-shield-check"></i> Supervisor</span>
+        </div>
+        <div class="greeting-date">2025년 6월 · Security Control Room</div>
+      </div>
+      <div class="search-wrap">
+        <i class="ti ti-search"></i>
+        <input type="text" id="memberSearch" placeholder="이름, 사번, 포지션 검색..."/>
+      </div>
+      <div class="top-actions">
+        <div class="icon-btn"><i class="ti ti-bell"></i></div>
+        <div class="dark-toggle" onclick="toggleDark()" aria-label="다크모드">
+          <div class="knob" id="knob">🌙</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="am-content">
+
+      <!-- ── 상단: 사원 상세 + 면담 기록 ─────────────── -->
+      <div class="am-detail-panel" id="detailPanel">
+        <div class="detail-empty" id="detailEmpty">
+          <i class="ti ti-user-search"></i>
+          <p>하단 목록에서 사원을 선택하면<br>상세 정보 및 면담 기록이 표시됩니다.</p>
+        </div>
+        <div class="detail-content" id="detailContent" style="display:none;">
+          <!-- 좌: 사원 기본 정보 -->
+          <div class="detail-profile" id="detailProfile"></div>
+          <!-- 중: 업무 현황 요약 -->
+          <div class="detail-stats" id="detailStats"></div>
+          <!-- 우: 면담 기록 -->
+          <div class="detail-interview" id="detailInterview"></div>
+        </div>
+      </div>
+
+      <!-- ── 하단: 사원 목록 ──────────────────────────── -->
+      <div class="am-list-section">
+        <!-- 툴바 -->
+        <div class="am-toolbar">
+          <div class="toolbar-left">
+            <div class="view-tabs">
+              <button class="view-tab active" id="tabKanban" onclick="switchView('kanban')">
+                <i class="ti ti-layout-grid"></i> 카드
+              </button>
+              <button class="view-tab" id="tabList" onclick="switchView('list')">
+                <i class="ti ti-list"></i> 리스트
+              </button>
+            </div>
+            <select class="filter-sel" id="deptFilter" onchange="renderMemberList()">
+              <option value="all">전체 부서</option>
+            </select>
+            <select class="filter-sel" id="sortFilter" onchange="renderMemberList()">
+              <option value="hire">입사순</option>
+              <option value="position">포지션순</option>
+              <option value="name">이름순</option>
+            </select>
+            <select class="filter-sel" id="promFilter" onchange="renderMemberList()">
+              <option value="all">전체</option>
+              <option value="restricted">진급 제한 중</option>
+              <option value="eligible">진급 가능</option>
+            </select>
+          </div>
+          <div class="toolbar-right">
+            <button class="btn-add" onclick="openAddModal()">
+              <i class="ti ti-user-plus"></i> 사원 추가
+            </button>
+          </div>
+        </div>
+
+        <!-- 카드 뷰 -->
+        <div class="member-kanban" id="memberKanban"></div>
+        <!-- 리스트 뷰 -->
+        <div class="member-list-wrap" id="memberListWrap" style="display:none;">
+          <div class="member-list-table">
+            <div class="ml-head">
+              <div class="ml-cell ml-photo"></div>
+              <div class="ml-cell ml-name">이름 / 사번</div>
+              <div class="ml-cell ml-dept">부서</div>
+              <div class="ml-cell ml-position">포지션</div>
+              <div class="ml-cell ml-rank">직급</div>
+              <div class="ml-cell ml-hire">입사일 / 연차</div>
+              <div class="ml-cell ml-promo">진급 상태</div>
+              <div class="ml-cell ml-actions">액션</div>
+            </div>
+            <div id="memberListBody"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 사원 추가/수정 모달 -->
+<div class="modal-backdrop" id="memberModalBackdrop" onclick="closeMemberModal(event)">
+  <div class="modal" style="width:580px;">
+    <div class="modal-header">
+      <div class="modal-title" id="memberModalTitle">사원 추가</div>
+      <button class="modal-close" onclick="closeMemberModal(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="gap:12px;">
+      <input type="hidden" id="editMemberId"/>
+      <div style="display:flex;align-items:center;gap:16px;padding:12px;background:var(--gray-bg);border-radius:9px;">
+        <div class="profile-avatar-preview" id="avatarPreview">?</div>
+        <div style="flex:1;">
+          <div style="font-size:11px;font-weight:500;color:var(--text-sec);margin-bottom:6px;">프로필 색상</div>
+          <div class="color-picker-row" id="colorPickerRow"></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group"><label class="fm-label">이름 <span class="req">*</span></label><input type="text" id="fmName" placeholder="홍길동"/></div>
+        <div class="form-group"><label class="fm-label">사번 <span class="req">*</span></label><input type="text" id="fmEmpId" placeholder="예: EMP-001"/></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group"><label class="fm-label">부서 <span class="req">*</span></label>
+          <select id="fmDept">
+            <option value="Control Room">Control Room</option>
+            <option value="Field Security">Field Security</option>
+            <option value="CCTV Monitoring">CCTV Monitoring</option>
+            <option value="Administration">Administration</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="fm-label">포지션 <span class="req">*</span></label>
+          <select id="fmPosition">
+            <option value="Supervisor">Supervisor</option>
+            <option value="Senior Officer">Senior Officer</option>
+            <option value="Officer">Officer</option>
+            <option value="Junior Officer">Junior Officer</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group"><label class="fm-label">직급</label><input type="text" id="fmRank" placeholder="예: 대리, 과장"/></div>
+        <div class="form-group"><label class="fm-label">입사일 <span class="req">*</span></label><input type="date" id="fmHireDate"/></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group"><label class="fm-label">최근 진급일</label><input type="date" id="fmPromDate" title="진급 제한 2년 계산에 사용"/></div>
+        <div class="form-group"><label class="fm-label">연락처</label><input type="text" id="fmPhone" placeholder="010-0000-0000"/></div>
+      </div>
+      <div class="form-group"><label class="fm-label">이메일</label><input type="text" id="fmEmail" placeholder="example@company.com"/></div>
+      <div class="form-group"><label class="fm-label">비고 / 메모</label><textarea id="fmMemo" rows="2" placeholder="특이사항 등"></textarea></div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px;border-top:.5px solid var(--card-border);display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="closeMemberModal(null)" class="btn-cancel-sm">취소</button>
+      <button onclick="saveMember()" class="btn-save-purple">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 면담 기록 추가 모달 -->
+<div class="modal-backdrop" id="interviewModalBackdrop" onclick="closeInterviewModal(event)">
+  <div class="modal" style="width:460px;">
+    <div class="modal-header">
+      <div class="modal-title">면담 기록 추가</div>
+      <button class="modal-close" onclick="closeInterviewModal(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="gap:10px;">
+      <input type="hidden" id="interviewMemberId"/>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group"><label class="fm-label">면담 일자 <span class="req">*</span></label><input type="date" id="ivDate"/></div>
+        <div class="form-group"><label class="fm-label">면담 유형</label>
+          <select id="ivType">
+            <option value="regular">정기 면담</option>
+            <option value="performance">성과 면담</option>
+            <option value="promotion">진급 면담</option>
+            <option value="disciplinary">징계 면담</option>
+            <option value="welfare">복지 상담</option>
+            <option value="etc">기타</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="fm-label">면담 내용 <span class="req">*</span></label><textarea id="ivContent" rows="4" placeholder="면담 내용을 상세히 기록해주세요..."></textarea></div>
+      <div class="form-group"><label class="fm-label">결과 / 후속 조치</label><textarea id="ivResult" rows="2" placeholder="후속 조치 또는 특이사항"></textarea></div>
+      <div class="form-group"><label class="fm-label">면담자</label><input type="text" id="ivInterviewer" value="손대훈"/></div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px;border-top:.5px solid var(--card-border);display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="closeInterviewModal(null)" class="btn-cancel-sm">취소</button>
+      <button onclick="saveInterview()" class="btn-save-purple">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 삭제 확인 모달 -->
+<div class="modal-backdrop" id="deleteModalBackdrop" onclick="closeDeleteModal(event)">
+  <div class="modal" style="width:360px;">
+    <div class="modal-header">
+      <div class="modal-title">사원 삭제</div>
+      <button class="modal-close" onclick="closeDeleteModal(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text-primary);">이 사원 정보를 삭제하시겠습니까?<br>
+      <span style="font-size:11px;color:var(--text-sec);">면담 기록을 포함한 모든 데이터가 삭제됩니다.</span></p>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px;border-top:.5px solid var(--card-border);display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="closeDeleteModal(null)" class="btn-cancel-sm">취소</button>
+      <button onclick="confirmDeleteMember()" class="btn-danger-sm">삭제</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/admin-members.js"></script>
+</body>
+</html>
