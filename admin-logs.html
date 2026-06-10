@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>INSPIRE — 로그 기록 (관리자)</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/admin.css"/>
+  <link rel="stylesheet" href="css/admin-logs.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+</head>
+<body>
+<div id="wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-top">
+      <div class="logo-icon" style="background:#7c3aed;"><i class="ti ti-shield-lock"></i></div>
+      <div class="logo-text-wrap"><div class="logo-name">INSPIRE</div><div class="logo-sub">관리자 대시보드</div></div>
+      <button class="collapse-btn" id="collapseBtn" onclick="toggleSidebar()" aria-label="사이드바 접기">
+        <i class="ti ti-layout-sidebar-left-collapse" id="collapseIcon"></i>
+      </button>
+    </div>
+    <div class="sb-ws">
+      <div class="sb-label">워크스페이스</div>
+      <div class="ws-box" style="background:var(--purple-active-bg);">
+        <div class="ws-dot" style="background:#7c3aed;"></div>
+        <div class="ws-name" style="color:#7c3aed;">Security Control Room</div>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">관리자 메뉴</div>
+      <div class="sb-item" onclick="location.href='admin.html'"><i class="ti ti-layout-dashboard"></i><span>팀 대시보드</span></div>
+      <div class="sb-item" onclick="location.href='admin-members.html'"><i class="ti ti-users"></i><span>사원 관리</span></div>
+      <div class="sb-item" onclick="location.href='admin-kpi.html'"><i class="ti ti-target"></i><span>KPI 현황</span></div>
+      <div class="sb-item" onclick="location.href='admin-task.html'"><i class="ti ti-checkbox"></i><span>Task 현황</span></div>
+      <div class="sb-item" onclick="location.href='admin-project.html'"><i class="ti ti-layout-kanban"></i><span>Project 현황</span></div>
+      <div class="sb-item active"><i class="ti ti-notes"></i><span>로그 기록</span></div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">사원 페이지</div>
+      <div class="sb-item" onclick="location.href='index.html'"><i class="ti ti-arrow-left"></i><span>사원 홈으로</span></div>
+    </div>
+    <div class="sb-spacer"></div>
+    <div class="sb-foot">
+      <div class="page-switch-row">
+        <button class="page-switch-btn" onclick="location.href='index.html'"><i class="ti ti-user"></i><span>사원 페이지</span></button>
+        <button class="page-switch-btn active-page"><i class="ti ti-shield-check"></i><span>관리자 페이지</span></button>
+      </div>
+      <div class="user-row">
+        <div class="avatar" style="background:#7c3aed;">SV</div>
+        <div class="user-info"><div class="user-name">손대훈</div><div class="user-role" style="color:#7c3aed;">Supervisor</div></div>
+        <button class="logout-btn" onclick="location.href='login.html'" aria-label="로그아웃"><i class="ti ti-logout"></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="right-main">
+    <div class="topbar">
+      <div class="greeting">
+        <div class="greeting-name">로그 기록 <span class="admin-badge"><i class="ti ti-shield-check"></i> Supervisor</span></div>
+        <div class="greeting-date">2025년 6월 · Security Control Room</div>
+      </div>
+      <div class="search-wrap">
+        <i class="ti ti-search"></i>
+        <input type="text" id="logSearch" placeholder="사원명, 내용, 유형 검색..."/>
+      </div>
+      <div class="top-actions">
+        <div class="icon-btn"><i class="ti ti-bell"></i></div>
+        <div class="dark-toggle" onclick="toggleDark()" aria-label="다크모드"><div class="knob" id="knob">🌙</div></div>
+      </div>
+    </div>
+
+    <div class="al-content">
+
+      <!-- ① 요약 카드 -->
+      <div class="al-summary" id="alSummary"></div>
+
+      <!-- ② 메인 바디: 캘린더 + 타임라인 -->
+      <div class="al-main-row">
+
+        <!-- 캘린더 패널 -->
+        <div class="al-calendar-panel card">
+          <div class="card-head"><i class="ti ti-calendar"></i><div class="card-head-title">날짜 선택</div></div>
+          <div class="al-cal-body">
+            <div class="al-cal-header">
+              <button class="cal-nav-btn" onclick="changeMonth(-1)"><i class="ti ti-chevron-left"></i></button>
+              <div class="al-cal-month" id="alCalMonth"></div>
+              <button class="cal-nav-btn" onclick="changeMonth(1)"><i class="ti ti-chevron-right"></i></button>
+            </div>
+            <div class="al-cal-grid" id="alCalGrid"></div>
+            <div class="al-cal-legend">
+              <div class="al-leg-item"><div class="al-leg-dot" style="background:#2563eb;"></div>데일리 로그</div>
+              <div class="al-leg-item"><div class="al-leg-dot" style="background:#dc2626;"></div>사건보고서</div>
+              <div class="al-leg-item"><div class="al-leg-dot" style="background:#d97706;"></div>인수인계</div>
+              <div class="al-leg-item"><div class="al-leg-dot" style="background:#7c3aed;"></div>시스템</div>
+            </div>
+          </div>
+          <!-- 사원 필터 -->
+          <div class="al-member-filter">
+            <div class="al-filter-label">사원 필터</div>
+            <div class="al-member-chips" id="alMemberChips"></div>
+          </div>
+        </div>
+
+        <!-- 타임라인 피드 -->
+        <div class="al-timeline-panel card">
+          <div class="card-head">
+            <i class="ti ti-timeline"></i>
+            <div class="card-head-title">타임라인</div>
+            <span class="al-selected-date" id="alSelectedDate"></span>
+            <div style="margin-left:auto;display:flex;gap:6px;">
+              <select class="filter-sel-sm" id="tlTypeFilter" onchange="renderTimeline()">
+                <option value="all">전체 유형</option>
+                <option value="daily">데일리 로그</option>
+                <option value="incident">사건보고서</option>
+                <option value="handover">인수인계</option>
+                <option value="cctv">CCTV Review</option>
+                <option value="warrant">경찰영장공문</option>
+                <option value="system">시스템 활동</option>
+              </select>
+            </div>
+            <span class="card-head-badge badge-blue" id="tlCount">0</span>
+          </div>
+          <div class="al-timeline-body" id="alTimelineBody"></div>
+        </div>
+
+      </div>
+
+      <!-- ③ 전체 로그 테이블 -->
+      <div class="al-table-section card">
+        <div class="card-head">
+          <i class="ti ti-list-details"></i>
+          <div class="card-head-title">전체 로그 목록</div>
+          <div style="display:flex;gap:7px;margin-left:auto;flex-wrap:wrap;">
+            <select class="filter-sel-sm" id="tblTypeFilter" onchange="renderLogTable()">
+              <option value="all">전체 유형</option>
+              <option value="daily">데일리 로그</option>
+              <option value="incident">사건보고서</option>
+              <option value="handover">인수인계</option>
+              <option value="cctv">CCTV Review</option>
+              <option value="warrant">경찰영장공문</option>
+              <option value="system">시스템 활동</option>
+            </select>
+            <select class="filter-sel-sm" id="tblMemberFilter" onchange="renderLogTable()">
+              <option value="all">전체 사원</option>
+            </select>
+            <select class="filter-sel-sm" id="tblSortFilter" onchange="renderLogTable()">
+              <option value="newest">최신순</option>
+              <option value="oldest">오래된순</option>
+              <option value="member">사원순</option>
+            </select>
+          </div>
+          <span class="card-head-badge badge-gray" id="tblCount">0</span>
+        </div>
+        <div class="al-table-wrap">
+          <div class="al-table">
+            <div class="alt-head">
+              <div class="alt-cell alt-type">유형</div>
+              <div class="alt-cell alt-member">사원</div>
+              <div class="alt-cell alt-title">제목 / 내용</div>
+              <div class="alt-cell alt-date">날짜·시간</div>
+              <div class="alt-cell alt-status">상태</div>
+              <div class="alt-cell alt-actions">상세</div>
+            </div>
+            <div id="logTableBody"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 상세 드로어 -->
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div id="drawerHeaderInfo"></div>
+    <button class="drawer-close" onclick="closeDrawer()"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/admin-logs.js"></script>
+</body>
+</html>
