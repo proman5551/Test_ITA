@@ -11,120 +11,63 @@
 
 <div id="wrap">
 
-  <!-- ── SIDEBAR ─────────────────────────────── -->
-  <aside class="sidebar" id="sidebar">
+<!-- ── SIDEBAR ─────────────────────────────── -->
+<aside class="sidebar" id="sidebar">
 
-    <div class="sb-top">
-      <div class="logo-icon" onclick="toggleSidebar()">
-        <i class="ti ti-shield-lock" aria-hidden="true"></i>
+  <div class="sb-top">
+    <div class="logo-icon" onclick="toggleSidebar()">
+      <i class="ti ti-shield-lock" aria-hidden="true"></i>
+    </div>
+    <div class="logo-text-wrap">
+      <div class="logo-name">INSPIRE</div>
+      <div class="logo-sub">Security Team</div>
+    </div>
+    <button class="collapse-btn" id="collapseBtn" onclick="toggleSidebar()" aria-label="사이드바 접기/펼치기">
+      <i class="ti ti-layout-sidebar-left-collapse" id="collapseIcon"></i>
+    </button>
+  </div>
+
+  <div class="sb-ws">
+    <div class="sb-label">워크스페이스</div>
+    <div class="ws-box">
+      <div class="ws-dot"></div>
+      <div class="ws-name">Control Room</div>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">개인 업무</div>
+    <div id="personalMenu"></div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">업무</div>
+    <div id="workMenu"></div>
+  </div>
+
+  <div class="sb-spacer"></div>
+
+  <div class="sb-foot">
+
+<div class="page-switch-row" id="pageSwitchRow"></div>
+
+    <div class="user-row">
+      <div class="avatar" id="userAvatar"></div>
+
+      <div class="user-info">
+        <div class="user-name" id="loginUserName"></div>
+        <div class="user-role" id="loginUserInfo"></div>
       </div>
-      <div class="logo-text-wrap">
-        <div class="logo-name">INSPIRE</div>
-        <div class="logo-sub">Security Team</div>
-      </div>
-      <button class="collapse-btn" id="collapseBtn" onclick="toggleSidebar()" aria-label="사이드바 접기/펼치기">
-        <i class="ti ti-layout-sidebar-left-collapse" id="collapseIcon"></i>
+
+      <button class="logout-btn" onclick="logout()" aria-label="로그아웃">
+        <i class="ti ti-logout" aria-hidden="true"></i>
       </button>
     </div>
 
-    <div class="sb-ws">
-      <div class="sb-label">워크스페이스</div>
-      <div class="ws-box">
-        <div class="ws-dot"></div>
-        <div class="ws-name">Control Room</div>
-      </div>
-    </div>
+  </div>
 
-    <div class="sb-section">
-      <div class="sb-label">개인 업무</div>
-
-      <a href="index.html" class="sb-item active">
-        <i class="ti ti-home" aria-hidden="true"></i>
-        <span>홈</span>
-      </a>
-
-      <a href="kpi.html" class="sb-item">
-        <i class="ti ti-target" aria-hidden="true"></i>
-        <span>KPI 관리</span>
-        <span class="sb-badge blue">3</span>
-      </a>
-
-    <a href="task.html" class="sb-item">
-      <i class="ti ti-checkbox" aria-hidden="true"></i>
-      <span>Task</span>
-      <span class="sb-badge ok">5</span>
-    </a>
-
-    <a href="project.html" class="sb-item">
-      <i class="ti ti-layout-kanban" aria-hidden="true"></i>
-      <span>Project</span>
-    </a>
-
-    <a href="memo.html" class="sb-item">
-      <i class="ti ti-notes" aria-hidden="true"></i>
-      <span>메모</span>
-    </a>
-</div>
-
-    <div class="sb-section">
-      <div class="sb-label">업무</div>
-      <div class="sb-item">
-        <i class="ti ti-file-report" aria-hidden="true"></i>
-        <span>사건보고서</span>
-        <span class="sb-badge blue">5</span>
-      </div>
-      <div class="sb-item">
-        <i class="ti ti-transfer" aria-hidden="true"></i>
-        <span>인수인계</span>
-        <span class="sb-badge ok">2</span>
-      </div>
-      <div class="sb-item">
-        <i class="ti ti-clipboard-list" aria-hidden="true"></i>
-        <span>데일리 로그</span>
-      </div>
-      <div class="sb-item">
-        <i class="ti ti-camera" aria-hidden="true"></i>
-        <span>CCTV Review</span>
-      </div>
-      <div class="sb-item">
-        <i class="ti ti-gavel" aria-hidden="true"></i>
-        <span>경찰영장공문</span>
-      </div>
-    </div>
-
-    <div class="sb-spacer"></div>
-
-    <div class="sb-foot">
-
-      <div class="page-switch-row">
-        <button class="page-switch-btn active-page">
-          <i class="ti ti-user"></i>
-          <span>사원 페이지</span>
-        </button>
-        
-        <button class="page-switch-btn" onclick="location.href='admin.html'">
-          <i class="ti ti-shield-check"></i>
-          <span>관리자 페이지</span>
-        </button>
-      </div>
-
-      <div class="user-row">
-        <div class="avatar">DH</div>
-        <div class="user-info">
-          <div class="user-name">손대훈</div>
-          <div class="user-role">Control Supervisor</div>
-        </div>
-        <button class="logout-btn" onclick="logout()" aria-label="로그아웃">
-          <i class="ti ti-logout" aria-hidden="true"></i>
-        </button>
-      </div>
-       
-
-
-    </div>
-
-  </aside>
-  <!-- ── /SIDEBAR ─────────────────────────────── -->
+</aside>
+<!-- ── /SIDEBAR ─────────────────────────────── -->
 
 
   <!-- ── MAIN RIGHT ─────────────────────────── -->
@@ -134,10 +77,10 @@
     <div class="topbar">
       <div class="greeting">
         <div class="greeting-name">
-          안녕하세요, 손대훈 님
+          안녕하세요, <span id="greetingName"></span>님
           <i class="ti ti-shield-check" aria-hidden="true"></i>
         </div>
-        <div class="greeting-date">2025년 6월 6일 금요일 · Security Control Room</div>
+        <div class="greeting-date" id="currentDateTime"></div>
       </div>
       <div class="search-wrap">
         <i class="ti ti-search" aria-hidden="true"></i>
