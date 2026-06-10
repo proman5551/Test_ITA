@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>INSPIRE — KPI 관리 (관리자)</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/admin.css"/>
+  <link rel="stylesheet" href="css/admin-kpi.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+</head>
+<body>
+<div id="wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-top">
+      <div class="logo-icon" style="background:#7c3aed;"><i class="ti ti-shield-lock"></i></div>
+      <div class="logo-text-wrap">
+        <div class="logo-name">INSPIRE</div>
+        <div class="logo-sub">관리자 대시보드</div>
+      </div>
+      <button class="collapse-btn" id="collapseBtn" onclick="toggleSidebar()" aria-label="사이드바 접기">
+        <i class="ti ti-layout-sidebar-left-collapse" id="collapseIcon"></i>
+      </button>
+    </div>
+    <div class="sb-ws">
+      <div class="sb-label">워크스페이스</div>
+      <div class="ws-box" style="background:var(--purple-active-bg);">
+        <div class="ws-dot" style="background:#7c3aed;"></div>
+        <div class="ws-name" style="color:#7c3aed;">Security Control Room</div>
+      </div>
+    </div>
+<div class="sb-section">
+  <div class="sb-label">관리자 메뉴</div>
+  <div id="adminMenu"></div>
+</div>
+
+<div class="sb-section">
+  <div class="sb-label">사원 페이지</div>
+  <div id="adminSubMenu"></div>
+</div>
+
+    <div class="sb-spacer"></div>
+    <div class="sb-foot">
+      <div class="page-switch-row">
+        <button class="page-switch-btn" onclick="location.href='index.html'">
+          <i class="ti ti-user"></i><span>사원 페이지</span>
+        </button>
+        <button class="page-switch-btn active-page">
+          <i class="ti ti-shield-check"></i><span>관리자 페이지</span>
+        </button>
+      </div>
+<!-- User Info -->
+<div class="user-row">
+  <div class="avatar admin-avatar" id="userAvatar"></div>
+
+  <div class="user-info">
+    <div class="user-name" id="loginUserName"></div>
+    <div class="user-role admin-user-role" id="loginUserInfo"></div>
+  </div>
+
+  <button class="logout-btn" onclick="logout()" aria-label="로그아웃">
+    <i class="ti ti-logout"></i>
+  </button>
+</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="right-main">
+    <div class="topbar">
+      <div class="greeting">
+        <div class="greeting-name">
+          KPI 현황 관리
+          <span class="admin-badge"><i class="ti ti-shield-check"></i> Supervisor</span>
+        </div>
+        <div class="greeting-date" id="currentDateTime"></div>
+      </div>
+      <div class="search-wrap">
+        <i class="ti ti-search"></i>
+        <input type="text" id="kpiAdminSearch" placeholder="KPI 제목, 사원명 검색..."/>
+      </div>
+      <div class="top-actions">
+        <div class="icon-btn"><i class="ti ti-bell"></i></div>
+        <div class="dark-toggle" onclick="toggleDark()" aria-label="다크모드">
+          <div class="knob" id="knob">🌙</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="akpi-content">
+
+      <!-- 상단 요약 카드 -->
+      <div class="akpi-summary" id="akpiSummary"></div>
+
+      <!-- 차트 Row: 사원별 비교 + 월별 트렌드 -->
+      <div class="akpi-charts-row">
+
+        <!-- 사원별 KPI 달성률 비교 -->
+        <div class="card akpi-chart-card">
+          <div class="card-head">
+            <i class="ti ti-chart-bar"></i>
+            <div class="card-head-title">사원별 KPI 달성률 비교</div>
+            <span class="card-head-badge badge-blue">6월</span>
+          </div>
+          <div class="member-compare-area" id="memberCompareArea"></div>
+        </div>
+
+        <!-- 월별 트렌드 (전월 대비) -->
+        <div class="card akpi-chart-card">
+          <div class="card-head">
+            <i class="ti ti-chart-line"></i>
+            <div class="card-head-title">KPI 항목별 전월 대비</div>
+            <span class="card-head-badge badge-gray">5월 → 6월</span>
+          </div>
+          <div class="trend-area" id="trendArea"></div>
+          <div class="trend-legend">
+            <div class="trend-leg-item"><div class="trend-leg-dot" style="background:#94a3b8;"></div>전월</div>
+            <div class="trend-leg-item"><div class="trend-leg-dot" style="background:#7c3aed;"></div>당월</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 필터 + 일괄 액션 바 -->
+      <div class="akpi-toolbar">
+        <div class="toolbar-left">
+          <select class="filter-sel" id="memberFilterKpi" onchange="renderKpiTable()">
+            <option value="all">전체 사원</option>
+          </select>
+          <select class="filter-sel" id="statusFilterKpi" onchange="renderKpiTable()">
+            <option value="all">전체 상태</option>
+            <option value="before">시작전</option>
+            <option value="inprogress">진행중</option>
+            <option value="review">검토중</option>
+            <option value="done">완료</option>
+            <option value="rejected">반려</option>
+          </select>
+          <select class="filter-sel" id="sortKpi" onchange="renderKpiTable()">
+            <option value="member">사원순</option>
+            <option value="pct_desc">달성률 높은순</option>
+            <option value="pct_asc">달성률 낮은순</option>
+            <option value="due">마감일순</option>
+          </select>
+        </div>
+        <div class="toolbar-right" style="display:flex;align-items:center;gap:7px;">
+          <span class="selected-count" id="selectedCount" style="font-size:11px;color:var(--text-sec);">선택 0건</span>
+          <button class="bulk-btn bulk-approve"  onclick="bulkAction('done')"    id="btnBulkApprove">  <i class="ti ti-check"></i> 일괄 승인</button>
+          <button class="bulk-btn bulk-review"   onclick="bulkAction('review')"  id="btnBulkReview">   <i class="ti ti-eye"></i> 검토중</button>
+          <button class="bulk-btn bulk-reject"   onclick="bulkAction('rejected')" id="btnBulkReject">  <i class="ti ti-x"></i> 일괄 반려</button>
+        </div>
+      </div>
+
+      <!-- KPI 상세 테이블 -->
+      <div class="akpi-table-wrap">
+        <div class="akpi-table" id="akpiTable">
+          <div class="at-head">
+            <div class="at-cell at-check"><input type="checkbox" id="checkAll" onchange="toggleAll(this)"/></div>
+            <div class="at-cell at-member">사원</div>
+            <div class="at-cell at-title">KPI 항목</div>
+            <div class="at-cell at-status">상태</div>
+            <div class="at-cell at-progress">달성률</div>
+            <div class="at-cell at-target">목표 / 현재</div>
+            <div class="at-cell at-due">마감일</div>
+            <div class="at-cell at-fb">피드백</div>
+            <div class="at-cell at-actions">액션</div>
+          </div>
+          <div id="akpiTableBody"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- KPI 목표치 수정 모달 -->
+<div class="modal-backdrop" id="editModalBackdrop" onclick="closeEditModal(event)">
+  <div class="modal" style="width:500px;">
+    <div class="modal-header">
+      <div class="modal-title" id="editModalTitle">KPI 수정 (관리자)</div>
+      <button class="modal-close" onclick="closeEditModal(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="gap:12px;">
+      <input type="hidden" id="editKpiId"/>
+      <div style="padding:10px 12px;background:var(--gray-bg);border-radius:8px;font-size:12px;color:var(--text-sec);" id="editKpiInfo"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group">
+          <label style="font-size:11px;font-weight:500;color:var(--text-sec);">상태 변경</label>
+          <select id="editStatus" style="padding:7px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;">
+            <option value="before">시작전</option>
+            <option value="inprogress">진행중</option>
+            <option value="review">검토중</option>
+            <option value="done">완료</option>
+            <option value="rejected">반려</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label style="font-size:11px;font-weight:500;color:var(--text-sec);">목표치 수정</label>
+          <input type="number" id="editTarget" min="0" style="padding:7px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;"/>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group">
+          <label style="font-size:11px;font-weight:500;color:var(--text-sec);">현재값 수정</label>
+          <input type="number" id="editCurrent" min="0" style="padding:7px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;"/>
+        </div>
+        <div class="form-group">
+          <label style="font-size:11px;font-weight:500;color:var(--text-sec);">마감일</label>
+          <input type="date" id="editDue" style="padding:7px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label style="font-size:11px;font-weight:500;color:var(--text-sec);">관리자 메모</label>
+        <textarea id="editAdminMemo" rows="2" style="padding:8px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;resize:vertical;width:100%;" placeholder="관리자 메모 (내부용)"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px;border-top:.5px solid var(--card-border);display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="closeEditModal(null)" style="padding:7px 16px;border-radius:7px;border:.5px solid var(--card-border);background:transparent;color:var(--text-sec);font-size:12px;cursor:pointer;font-family:inherit;">취소</button>
+      <button onclick="saveKpiEdit()" style="padding:7px 20px;border-radius:7px;border:.5px solid #7c3aed;background:#7c3aed;color:#fff;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 피드백 작성 모달 -->
+<div class="modal-backdrop" id="fbModalBackdrop" onclick="closeFbModal(event)">
+  <div class="modal" style="width:500px;">
+    <div class="modal-header">
+      <div class="modal-title">KPI 피드백 작성</div>
+      <button class="modal-close" onclick="closeFbModal(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="gap:10px;">
+      <input type="hidden" id="fbKpiId"/>
+      <div style="padding:10px 12px;background:var(--gray-bg);border-radius:8px;font-size:12px;color:var(--text-primary);" id="fbKpiInfo"></div>
+
+      <!-- 기존 피드백 스레드 -->
+      <div>
+        <div style="font-size:11px;font-weight:500;color:var(--sb-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">피드백 이력</div>
+        <div id="fbThread" style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;"></div>
+      </div>
+
+      <!-- 새 피드백 작성 -->
+      <div style="border-top:.5px solid var(--card-border);padding-top:10px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-size:11px;font-weight:500;color:var(--sb-muted);text-transform:uppercase;letter-spacing:.04em;">새 피드백 작성</div>
+        <textarea id="fbNewText" rows="3" style="padding:8px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;resize:vertical;width:100%;" placeholder="피드백 내용을 입력하세요..."></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <label style="font-size:11px;font-weight:500;color:var(--text-sec);display:block;margin-bottom:5px;">평가</label>
+            <select id="fbRating" style="width:100%;padding:7px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;">
+              <option value="excellent">우수 ⭐⭐⭐</option>
+              <option value="good" selected>양호 ⭐⭐</option>
+              <option value="needs_improvement">개선 필요 ⭐</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:500;color:var(--text-sec);display:block;margin-bottom:5px;">액션</label>
+            <select id="fbAction" style="width:100%;padding:7px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;">
+              <option value="comment">코멘트만</option>
+              <option value="approve">승인</option>
+              <option value="request_revision">수정 요청</option>
+              <option value="reject">반려</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px;border-top:.5px solid var(--card-border);display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="closeFbModal(null)" style="padding:7px 16px;border-radius:7px;border:.5px solid var(--card-border);background:transparent;color:var(--text-sec);font-size:12px;cursor:pointer;font-family:inherit;">취소</button>
+      <button onclick="submitFb()" style="padding:7px 20px;border-radius:7px;border:.5px solid #7c3aed;background:#7c3aed;color:#fff;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;"><i class="ti ti-send" style="font-size:13px;margin-right:4px;"></i>제출</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/admin-kpi.js"></script>
+</body>
+</html>
