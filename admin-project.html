@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>INSPIRE — Project 현황 (관리자)</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/admin.css"/>
+  <link rel="stylesheet" href="css/admin-project.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+</head>
+<body>
+<div id="wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-top">
+      <div class="logo-icon" style="background:#7c3aed;"><i class="ti ti-shield-lock"></i></div>
+      <div class="logo-text-wrap"><div class="logo-name">INSPIRE</div><div class="logo-sub">관리자 대시보드</div></div>
+      <button class="collapse-btn" id="collapseBtn" onclick="toggleSidebar()" aria-label="사이드바 접기">
+        <i class="ti ti-layout-sidebar-left-collapse" id="collapseIcon"></i>
+      </button>
+    </div>
+    <div class="sb-ws">
+      <div class="sb-label">워크스페이스</div>
+      <div class="ws-box" style="background:var(--purple-active-bg);">
+        <div class="ws-dot" style="background:#7c3aed;"></div>
+        <div class="ws-name" style="color:#7c3aed;">Security Control Room</div>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">관리자 메뉴</div>
+      <div class="sb-item" onclick="location.href='admin.html'"><i class="ti ti-layout-dashboard"></i><span>팀 대시보드</span></div>
+      <div class="sb-item" onclick="location.href='admin-members.html'"><i class="ti ti-users"></i><span>사원 관리</span></div>
+      <div class="sb-item" onclick="location.href='admin-kpi.html'"><i class="ti ti-target"></i><span>KPI 현황</span></div>
+      <div class="sb-item" onclick="location.href='admin-task.html'"><i class="ti ti-checkbox"></i><span>Task 현황</span></div>
+      <div class="sb-item active"><i class="ti ti-layout-kanban"></i><span>Project 현황</span></div>
+      <div class="sb-item"><i class="ti ti-message-circle"></i><span>피드백 내역</span></div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">사원 페이지</div>
+      <div class="sb-item" onclick="location.href='project.html'"><i class="ti ti-arrow-left"></i><span>사원 Project로</span></div>
+    </div>
+    <div class="sb-spacer"></div>
+    <div class="sb-foot">
+      <div class="page-switch-row">
+        <button class="page-switch-btn" onclick="location.href='index.html'"><i class="ti ti-user"></i><span>사원 페이지</span></button>
+        <button class="page-switch-btn active-page"><i class="ti ti-shield-check"></i><span>관리자 페이지</span></button>
+      </div>
+      <div class="user-row">
+        <div class="avatar" style="background:#7c3aed;">SV</div>
+        <div class="user-info"><div class="user-name">손대훈</div><div class="user-role" style="color:#7c3aed;">Supervisor</div></div>
+        <button class="logout-btn" onclick="location.href='login.html'" aria-label="로그아웃"><i class="ti ti-logout"></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="right-main">
+    <div class="topbar">
+      <div class="greeting">
+        <div class="greeting-name">Project 현황 관리 <span class="admin-badge"><i class="ti ti-shield-check"></i> Supervisor</span></div>
+        <div class="greeting-date">2025년 6월 · Security Control Room</div>
+      </div>
+      <div class="search-wrap">
+        <i class="ti ti-search"></i>
+        <input type="text" id="projSearch" placeholder="프로젝트명, 담당자 검색..."/>
+      </div>
+      <div class="top-actions">
+        <div class="icon-btn"><i class="ti ti-bell"></i></div>
+        <div class="dark-toggle" onclick="toggleDark()" aria-label="다크모드"><div class="knob" id="knob">🌙</div></div>
+      </div>
+    </div>
+
+    <div class="ap-content">
+
+      <!-- ① 요약 카드 -->
+      <div class="ap-summary" id="apSummary"></div>
+
+      <!-- ② 차트 3단 -->
+      <div class="ap-charts-row">
+        <!-- 사원별 Project 비교 -->
+        <div class="card ap-chart-card">
+          <div class="card-head"><i class="ti ti-chart-bar"></i><div class="card-head-title">사원별 Project 현황</div><span class="card-head-badge badge-blue" id="totalProjBadge">0</span></div>
+          <div class="member-proj-area" id="memberProjArea"></div>
+        </div>
+        <!-- 마감 위험도 -->
+        <div class="card ap-chart-card">
+          <div class="card-head"><i class="ti ti-alert-triangle"></i><div class="card-head-title">마감일 위험도</div><span class="card-head-badge badge-danger" id="riskProjBadge">0</span></div>
+          <div class="proj-risk-area" id="projRiskArea"></div>
+        </div>
+        <!-- 최근 코멘트 -->
+        <div class="card ap-chart-card">
+          <div class="card-head"><i class="ti ti-message-circle"></i><div class="card-head-title">최근 코멘트</div><span class="card-head-badge badge-ok" id="projCommentBadge">0</span></div>
+          <div class="proj-comment-feed" id="projCommentFeed"></div>
+        </div>
+      </div>
+
+      <!-- ③ 타임라인(간트차트) -->
+      <div class="card ap-timeline-card">
+        <div class="card-head">
+          <i class="ti ti-timeline"></i>
+          <div class="card-head-title">Project 타임라인</div>
+          <div class="tl-filter-row">
+            <select class="filter-sel-sm" id="tlStatusFilter" onchange="renderTimeline()">
+              <option value="all">전체 상태</option>
+              <option value="planning">기획중</option>
+              <option value="inprogress">진행중</option>
+              <option value="review">검토중</option>
+              <option value="done">완료</option>
+              <option value="hold">보류</option>
+            </select>
+          </div>
+          <span class="card-head-badge badge-gray" id="tlProjCount">0</span>
+        </div>
+        <div class="ap-timeline-wrap">
+          <div class="tl-header" id="tlHeader"></div>
+          <div class="tl-body"   id="tlBody"></div>
+        </div>
+      </div>
+
+      <!-- ④ 필터 + 일괄 액션 + 테이블 -->
+      <div class="ap-toolbar">
+        <div class="toolbar-left">
+          <select class="filter-sel" id="statusFilterTbl" onchange="renderProjTable()">
+            <option value="all">전체 상태</option>
+            <option value="planning">기획중</option>
+            <option value="inprogress">진행중</option>
+            <option value="review">검토중</option>
+            <option value="done">완료</option>
+            <option value="hold">보류</option>
+          </select>
+          <select class="filter-sel" id="priFilterTbl" onchange="renderProjTable()">
+            <option value="all">전체 우선순위</option>
+            <option value="high">높음</option>
+            <option value="mid">중간</option>
+            <option value="low">낮음</option>
+          </select>
+          <select class="filter-sel" id="riskFilterTbl" onchange="renderProjTable()">
+            <option value="all">전체 위험도</option>
+            <option value="critical">긴급</option>
+            <option value="warning">주의</option>
+            <option value="safe">정상</option>
+          </select>
+          <select class="filter-sel" id="sortTbl" onchange="renderProjTable()">
+            <option value="end">마감일순</option>
+            <option value="progress">진행률순</option>
+            <option value="owner">담당자순</option>
+            <option value="priority">우선순위순</option>
+          </select>
+        </div>
+        <div class="toolbar-right">
+          <span class="selected-count" id="selectedCount">선택 0건</span>
+          <button class="bulk-btn bulk-approve"  onclick="bulkStatus('done')"       id="btnBulkDone">  <i class="ti ti-check"></i> 일괄 완료·승인</button>
+          <button class="bulk-btn bulk-review"   onclick="bulkStatus('review')"     id="btnBulkReview"><i class="ti ti-eye"></i> 검토중</button>
+          <button class="bulk-btn bulk-reject"   onclick="bulkStatus('hold')"       id="btnBulkHold">  <i class="ti ti-player-pause"></i> 보류</button>
+          <button class="btn-add" onclick="openProjModal()"><i class="ti ti-plus"></i> Project 추가</button>
+        </div>
+      </div>
+
+      <div class="ap-table-wrap">
+        <div class="ap-table">
+          <div class="apt-head">
+            <div class="apt-cell apt-check"><input type="checkbox" id="checkAll" onchange="toggleAll(this)"/></div>
+            <div class="apt-cell apt-title">프로젝트명</div>
+            <div class="apt-cell apt-owner">담당자</div>
+            <div class="apt-cell apt-pri">우선순위</div>
+            <div class="apt-cell apt-status">상태</div>
+            <div class="apt-cell apt-progress">진행률</div>
+            <div class="apt-cell apt-period">기간</div>
+            <div class="apt-cell apt-risk">위험도</div>
+            <div class="apt-cell apt-comment">코멘트</div>
+            <div class="apt-cell apt-actions">액션</div>
+          </div>
+          <div id="projTableBody"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Project 추가/수정 모달 -->
+<div class="modal-backdrop" id="projModalBackdrop" onclick="closeProjModal(event)">
+  <div class="modal" style="width:600px;">
+    <div class="modal-header">
+      <div class="modal-title" id="projModalTitle">Project 추가</div>
+      <button class="modal-close" onclick="closeProjModal(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="gap:12px;">
+      <input type="hidden" id="editProjId"/>
+      <div class="form-group"><label class="fm-label">프로젝트명 <span class="req">*</span></label><input type="text" id="fpTitle" placeholder="프로젝트 제목"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div class="form-group"><label class="fm-label">상태</label>
+          <select id="fpStatus"><option value="planning">기획중</option><option value="inprogress">진행중</option><option value="review">검토중</option><option value="done">완료</option><option value="hold">보류</option></select>
+        </div>
+        <div class="form-group"><label class="fm-label">우선순위</label>
+          <select id="fpPriority"><option value="high">높음</option><option value="mid" selected>중간</option><option value="low">낮음</option></select>
+        </div>
+        <div class="form-group"><label class="fm-label">진행률 (%)</label>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <input type="number" id="fpProgress" min="0" max="100" value="0" style="width:70px;flex-shrink:0;"/>
+            <div style="flex:1;height:6px;background:var(--gray-bg);border-radius:3px;overflow:hidden;">
+              <div id="fpProgressBar" style="height:6px;border-radius:3px;background:#2563eb;width:0%;transition:width .3s;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group"><label class="fm-label">시작일</label><input type="date" id="fpStart"/></div>
+        <div class="form-group"><label class="fm-label">종료일</label><input type="date" id="fpEnd"/></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group"><label class="fm-label">담당자</label><input type="text" id="fpOwner" placeholder="예: 손대훈"/></div>
+        <div class="form-group"><label class="fm-label">멤버</label><input type="text" id="fpMembers" placeholder="예: 김아무개, 이담당"/></div>
+      </div>
+      <div class="form-group"><label class="fm-label">태그</label><input type="text" id="fpTags" placeholder="예: 보안, CCTV (쉼표)"/></div>
+      <div class="form-group"><label class="fm-label">설명</label><textarea id="fpDesc" rows="2" placeholder="프로젝트 목표 및 설명"></textarea></div>
+      <div class="form-group"><label class="fm-label">메모</label><textarea id="fpMemo" rows="2" placeholder="관리자 메모"></textarea></div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px;border-top:.5px solid var(--card-border);display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="closeProjModal(null)" class="btn-cancel-sm">취소</button>
+      <button onclick="saveProjAdmin()" class="btn-save-purple">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 진행률 수정 모달 -->
+<div class="modal-backdrop" id="progressModalBackdrop" onclick="closeProgressModal(event)">
+  <div class="modal" style="width:380px;">
+    <div class="modal-header">
+      <div class="modal-title">진행률 수정</div>
+      <button class="modal-close" onclick="closeProgressModal(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="gap:12px;">
+      <input type="hidden" id="editProgressId"/>
+      <div style="padding:10px 12px;background:var(--gray-bg);border-radius:8px;font-size:12px;color:var(--text-primary);" id="progressProjInfo"></div>
+      <div class="form-group">
+        <label class="fm-label">진행률 (%)</label>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <input type="number" id="newProgress" min="0" max="100" style="width:80px;flex-shrink:0;padding:7px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:13px;font-family:inherit;outline:none;"/>
+          <div style="flex:1;height:10px;background:var(--gray-bg);border-radius:5px;overflow:hidden;">
+            <div id="progressPreviewBar" style="height:10px;border-radius:5px;background:#2563eb;width:0%;transition:width .3s;"></div>
+          </div>
+          <span id="progressPreviewPct" style="font-size:13px;font-weight:500;color:var(--text-primary);min-width:36px;text-align:right;">0%</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px;border-top:.5px solid var(--card-border);display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="closeProgressModal(null)" class="btn-cancel-sm">취소</button>
+      <button onclick="saveProgress()" class="btn-save-purple">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 코멘트 모달 -->
+<div class="modal-backdrop" id="commentModalBackdrop" onclick="closeCommentModal(event)">
+  <div class="modal" style="width:500px;">
+    <div class="modal-header">
+      <div class="modal-title">코멘트 작성</div>
+      <button class="modal-close" onclick="closeCommentModal(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="gap:10px;">
+      <input type="hidden" id="commentProjId"/>
+      <div style="padding:10px 12px;background:var(--gray-bg);border-radius:8px;font-size:12px;color:var(--text-primary);" id="commentProjInfo"></div>
+      <div id="commentThread" style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;"></div>
+      <div style="border-top:.5px solid var(--card-border);padding-top:10px;display:flex;flex-direction:column;gap:8px;">
+        <textarea id="commentText" rows="3" style="padding:8px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;resize:vertical;width:100%;" placeholder="코멘트 또는 피드백을 입력하세요..."></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div><label class="fm-label" style="display:block;margin-bottom:5px;">유형</label>
+            <select id="commentType" style="width:100%;padding:7px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;">
+              <option value="comment">일반 코멘트</option>
+              <option value="approve">승인</option>
+              <option value="request_revision">수정 요청</option>
+              <option value="reject">반려</option>
+            </select>
+          </div>
+          <div><label class="fm-label" style="display:block;margin-bottom:5px;">상태 변경</label>
+            <select id="commentStatus" style="width:100%;padding:7px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;">
+              <option value="">변경 없음</option>
+              <option value="planning">기획중</option>
+              <option value="inprogress">진행중</option>
+              <option value="review">검토중</option>
+              <option value="done">완료</option>
+              <option value="hold">보류</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px;border-top:.5px solid var(--card-border);display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="closeCommentModal(null)" class="btn-cancel-sm">취소</button>
+      <button onclick="submitComment()" class="btn-save-purple"><i class="ti ti-send" style="font-size:13px;margin-right:4px;"></i>제출</button>
+    </div>
+  </div>
+</div>
+
+<!-- 삭제 확인 모달 -->
+<div class="modal-backdrop" id="deleteModalBackdrop" onclick="closeDeleteModal(event)">
+  <div class="modal" style="width:360px;">
+    <div class="modal-header"><div class="modal-title">Project 삭제</div><button class="modal-close" onclick="closeDeleteModal(null)"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body"><p style="font-size:13px;color:var(--text-primary);">이 프로젝트를 삭제하시겠습니까?<br><span style="font-size:11px;color:var(--text-sec);">코멘트를 포함한 모든 데이터가 삭제됩니다.</span></p></div>
+    <div class="modal-footer" style="padding:12px 18px;border-top:.5px solid var(--card-border);display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="closeDeleteModal(null)" class="btn-cancel-sm">취소</button>
+      <button onclick="confirmDelete()" class="btn-danger-sm">삭제</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/admin-project.js"></script>
+</body>
+</html>
