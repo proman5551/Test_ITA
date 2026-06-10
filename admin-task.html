@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>INSPIRE — Task 현황 (관리자)</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/admin.css"/>
+  <link rel="stylesheet" href="css/admin-task.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+</head>
+<body>
+<div id="wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-top">
+      <div class="logo-icon" style="background:#7c3aed;"><i class="ti ti-shield-lock"></i></div>
+      <div class="logo-text-wrap"><div class="logo-name">INSPIRE</div><div class="logo-sub">관리자 대시보드</div></div>
+      <button class="collapse-btn" id="collapseBtn" onclick="toggleSidebar()" aria-label="사이드바 접기">
+        <i class="ti ti-layout-sidebar-left-collapse" id="collapseIcon"></i>
+      </button>
+    </div>
+    <div class="sb-ws">
+      <div class="sb-label">워크스페이스</div>
+      <div class="ws-box" style="background:var(--purple-active-bg);">
+        <div class="ws-dot" style="background:#7c3aed;"></div>
+        <div class="ws-name" style="color:#7c3aed;">Security Control Room</div>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">관리자 메뉴</div>
+      <div class="sb-item" onclick="location.href='admin.html'"><i class="ti ti-layout-dashboard"></i><span>팀 대시보드</span></div>
+      <div class="sb-item" onclick="location.href='admin-members.html'"><i class="ti ti-users"></i><span>사원 관리</span></div>
+      <div class="sb-item" onclick="location.href='admin-kpi.html'"><i class="ti ti-target"></i><span>KPI 현황</span></div>
+      <div class="sb-item active"><i class="ti ti-checkbox"></i><span>Task 현황</span></div>
+      <div class="sb-item"><i class="ti ti-layout-kanban"></i><span>Project 현황</span></div>
+      <div class="sb-item"><i class="ti ti-message-circle"></i><span>피드백 내역</span></div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">사원 페이지</div>
+      <div class="sb-item" onclick="location.href='task.html'"><i class="ti ti-arrow-left"></i><span>사원 Task로</span></div>
+    </div>
+    <div class="sb-spacer"></div>
+    <div class="sb-foot">
+      <div class="page-switch-row">
+        <button class="page-switch-btn" onclick="location.href='index.html'"><i class="ti ti-user"></i><span>사원 페이지</span></button>
+        <button class="page-switch-btn active-page"><i class="ti ti-shield-check"></i><span>관리자 페이지</span></button>
+      </div>
+      <div class="user-row">
+        <div class="avatar" style="background:#7c3aed;">SV</div>
+        <div class="user-info"><div class="user-name">손대훈</div><div class="user-role" style="color:#7c3aed;">Supervisor</div></div>
+        <button class="logout-btn" onclick="location.href='login.html'" aria-label="로그아웃"><i class="ti ti-logout"></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="right-main">
+    <div class="topbar">
+      <div class="greeting">
+        <div class="greeting-name">Task 현황 관리 <span class="admin-badge"><i class="ti ti-shield-check"></i> Supervisor</span></div>
+        <div class="greeting-date">2025년 6월 · Security Control Room</div>
+      </div>
+      <div class="search-wrap">
+        <i class="ti ti-search"></i>
+        <input type="text" id="taskAdminSearch" placeholder="Task 제목, 담당자 검색..."/>
+      </div>
+      <div class="top-actions">
+        <div class="icon-btn"><i class="ti ti-bell"></i></div>
+        <div class="dark-toggle" onclick="toggleDark()" aria-label="다크모드"><div class="knob" id="knob">🌙</div></div>
+      </div>
+    </div>
+
+    <div class="at-content">
+
+      <!-- 요약 카드 -->
+      <div class="at-summary" id="atSummary"></div>
+
+      <!-- 차트 Row -->
+      <div class="at-charts-row">
+        <!-- 사원별 Task 비교 -->
+        <div class="card at-chart-card">
+          <div class="card-head"><i class="ti ti-chart-bar"></i><div class="card-head-title">사원별 Task 현황</div><span class="card-head-badge badge-blue" id="totalTaskBadge">0</span></div>
+          <div class="member-task-area" id="memberTaskArea"></div>
+        </div>
+        <!-- 마감일 위험도 -->
+        <div class="card at-chart-card">
+          <div class="card-head"><i class="ti ti-alert-triangle"></i><div class="card-head-title">마감일 위험도</div><span class="card-head-badge badge-danger" id="riskBadge">0</span></div>
+          <div class="risk-area" id="riskArea"></div>
+        </div>
+        <!-- 최근 코멘트 -->
+        <div class="card at-chart-card">
+          <div class="card-head"><i class="ti ti-message-circle"></i><div class="card-head-title">최근 코멘트</div><span class="card-head-badge badge-ok" id="commentBadge">0</span></div>
+          <div class="comment-feed" id="commentFeed"></div>
+        </div>
+      </div>
+
+      <!-- 필터 + 일괄 액션 -->
+      <div class="at-toolbar">
+        <div class="toolbar-left">
+          <select class="filter-sel" id="assigneeFilter" onchange="renderTaskTable()"><option value="all">전체 담당자</option></select>
+          <select class="filter-sel" id="statusFilter" onchange="renderTaskTable()">
+            <option value="all">전체 상태</option>
+            <option value="todo">할 일</option>
+            <option value="doing">진행중</option>
+            <option value="review">검토중</option>
+            <option value="done">완료</option>
+            <option value="hold">보류</option>
+          </select>
+          <select class="filter-sel" id="priFilter" onchange="renderTaskTable()">
+            <option value="all">전체 우선순위</option>
+            <option value="high">높음</option>
+            <option value="mid">중간</option>
+            <option value="low">낮음</option>
+          </select>
+          <select class="filter-sel" id="riskFilter" onchange="renderTaskTable()">
+            <option value="all">전체 위험도</option>
+            <option value="critical">긴급</option>
+            <option value="warning">주의</option>
+            <option value="safe">정상</option>
+          </select>
+          <select class="filter-sel" id="sortTask" onchange="renderTaskTable()">
+            <option value="due">마감일순</option>
+            <option value="assignee">담당자순</option>
+            <option value="priority">우선순위순</option>
+            <option value="created">생성일순</option>
+          </select>
+        </div>
+        <div class="toolbar-right">
+          <span class="selected-count" id="selectedCount">선택 0건</span>
+          <button class="bulk-btn bulk-approve" onclick="bulkStatusChange('done')"    id="btnBulkDone">   <i class="ti ti-check"></i> 일괄 완료</button>
+          <button class="bulk-btn bulk-review"  onclick="bulkStatusChange('review')"  id="btnBulkReview"> <i class="ti ti-eye"></i> 검토중</button>
+          <button class="bulk-btn bulk-reject"  onclick="bulkStatusChange('hold')"    id="btnBulkHold">   <i class="ti ti-player-pause"></i> 보류</button>
+          <button class="bulk-btn" style="background:var(--purple-bg);color:var(--purple-t);border-color:var(--purple-b);" onclick="openReassignModal()" id="btnReassign"><i class="ti ti-arrows-exchange"></i> 재배정</button>
+          <button class="btn-add" onclick="openTaskAddModal()"><i class="ti ti-plus"></i> Task 추가</button>
+        </div>
+      </div>
+
+      <!-- Task 테이블 -->
+      <div class="at-table-wrap">
+        <div class="at-table">
+          <div class="att-head">
+            <div class="att-cell att-check"><input type="checkbox" id="checkAll" onchange="toggleAll(this)"/></div>
+            <div class="att-cell att-assignee">담당자</div>
+            <div class="att-cell att-title">Task 제목</div>
+            <div class="att-cell att-pri">우선순위</div>
+            <div class="att-cell att-status">상태</div>
+            <div class="att-cell att-due">마감일</div>
+            <div class="att-cell att-risk">위험도</div>
+            <div class="att-cell att-progress">체크리스트</div>
+            <div class="att-cell att-comment">코멘트</div>
+            <div class="att-cell att-actions">액션</div>
+          </div>
+          <div id="taskTableBody"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Task 추가/수정 모달 -->
+<div class="modal-backdrop" id="taskModalBackdrop" onclick="closeTaskModal(event)">
+  <div class="modal" style="width:580px;">
+    <div class="modal-header">
+      <div class="modal-title" id="taskModalTitle">Task 추가</div>
+      <button class="modal-close" onclick="closeTaskModal(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="gap:12px;">
+      <input type="hidden" id="editTaskId"/>
+      <div class="form-group"><label class="fm-label">제목 <span class="req">*</span></label><input type="text" id="ftTitle" placeholder="Task 제목"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div class="form-group"><label class="fm-label">담당자</label>
+          <select id="ftAssignee"><option value="">선택</option></select>
+        </div>
+        <div class="form-group"><label class="fm-label">우선순위</label>
+          <select id="ftPriority"><option value="high">높음</option><option value="mid" selected>중간</option><option value="low">낮음</option></select>
+        </div>
+        <div class="form-group"><label class="fm-label">상태</label>
+          <select id="ftStatus"><option value="todo">할 일</option><option value="doing">진행중</option><option value="review">검토중</option><option value="done">완료</option><option value="hold">보류</option></select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group"><label class="fm-label">마감일</label><input type="date" id="ftDue"/></div>
+        <div class="form-group"><label class="fm-label">태그</label><input type="text" id="ftTags" placeholder="예: CCTV, 순찰 (쉼표)"/></div>
+      </div>
+      <div class="form-group"><label class="fm-label">설명</label><textarea id="ftDesc" rows="2" placeholder="Task 설명"></textarea></div>
+      <div class="form-group"><label class="fm-label">메모</label><textarea id="ftMemo" rows="2" placeholder="추가 메모"></textarea></div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px;border-top:.5px solid var(--card-border);display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="closeTaskModal(null)" class="btn-cancel-sm">취소</button>
+      <button onclick="saveTaskAdmin()" class="btn-save-purple">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 담당자 재배정 모달 -->
+<div class="modal-backdrop" id="reassignBackdrop" onclick="closeReassignModal(event)">
+  <div class="modal" style="width:400px;">
+    <div class="modal-header">
+      <div class="modal-title">담당자 재배정</div>
+      <button class="modal-close" onclick="closeReassignModal(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="gap:10px;">
+      <div style="padding:10px 12px;background:var(--gray-bg);border-radius:8px;font-size:12px;color:var(--text-sec);" id="reassignInfo">선택된 Task에 담당자를 재배정합니다.</div>
+      <div class="form-group">
+        <label class="fm-label">새 담당자 <span class="req">*</span></label>
+        <select id="newAssignee" style="padding:7px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;"><option value="">선택</option></select>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px;border-top:.5px solid var(--card-border);display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="closeReassignModal(null)" class="btn-cancel-sm">취소</button>
+      <button onclick="confirmReassign()" class="btn-save-purple">재배정</button>
+    </div>
+  </div>
+</div>
+
+<!-- 코멘트 모달 -->
+<div class="modal-backdrop" id="commentBackdrop" onclick="closeCommentModal(event)">
+  <div class="modal" style="width:480px;">
+    <div class="modal-header">
+      <div class="modal-title">코멘트 작성</div>
+      <button class="modal-close" onclick="closeCommentModal(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" style="gap:10px;">
+      <input type="hidden" id="commentTaskId"/>
+      <div style="padding:10px 12px;background:var(--gray-bg);border-radius:8px;font-size:12px;color:var(--text-primary);" id="commentTaskInfo"></div>
+      <div id="commentThread" style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;"></div>
+      <div style="border-top:.5px solid var(--card-border);padding-top:10px;display:flex;flex-direction:column;gap:8px;">
+        <textarea id="commentText" rows="3" style="padding:8px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;resize:vertical;width:100%;" placeholder="코멘트 또는 피드백을 입력하세요..."></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <label style="font-size:11px;font-weight:500;color:var(--text-sec);display:block;margin-bottom:5px;">유형</label>
+            <select id="commentType" style="width:100%;padding:7px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;">
+              <option value="comment">일반 코멘트</option>
+              <option value="approve">승인</option>
+              <option value="request_revision">수정 요청</option>
+              <option value="reject">반려</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:500;color:var(--text-sec);display:block;margin-bottom:5px;">상태 변경</label>
+            <select id="commentStatusChange" style="width:100%;padding:7px 10px;border:.5px solid var(--card-border);border-radius:7px;background:var(--input-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;">
+              <option value="">변경 없음</option>
+              <option value="todo">할 일</option>
+              <option value="doing">진행중</option>
+              <option value="review">검토중</option>
+              <option value="done">완료</option>
+              <option value="hold">보류</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding:12px 18px;border-top:.5px solid var(--card-border);display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="closeCommentModal(null)" class="btn-cancel-sm">취소</button>
+      <button onclick="submitComment()" class="btn-save-purple"><i class="ti ti-send" style="font-size:13px;margin-right:4px;"></i>제출</button>
+    </div>
+  </div>
+</div>
+
+<!-- 삭제 확인 모달 -->
+<div class="modal-backdrop" id="deleteBackdrop" onclick="closeDeleteModal(event)">
+  <div class="modal" style="width:360px;">
+    <div class="modal-header">
+      <div class="modal-title">Task 삭제</div>
+      <button class="modal-close" onclick="closeDeleteModal(null)"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body"><p style="font-size:13px;color:var(--text-primary);">이 Task를 삭제하시겠습니까?<br><span style="font-size:11px;color:var(--text-sec);">삭제 후 복구가 불가능합니다.</span></p></div>
+    <div class="modal-footer" style="padding:12px 18px;border-top:.5px solid var(--card-border);display:flex;justify-content:flex-end;gap:8px;">
+      <button onclick="closeDeleteModal(null)" class="btn-cancel-sm">취소</button>
+      <button onclick="confirmDelete()" class="btn-danger-sm">삭제</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/admin-task.js"></script>
+</body>
+</html>
